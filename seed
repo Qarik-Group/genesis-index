@@ -1,0 +1,53 @@
+#!/bin/bash
+
+GET() {
+	curl -Lk -XGET ${ENDPOINT}${1}
+}
+PUT() {
+	curl -Lk -XPUT ${ENDPOINT}${1} --data "${2}" -H 'Content-type: application/json'
+}
+POST() {
+	curl -Lk -XPOST ${ENDPOINT}${1} --data "${2}" -H 'Content-type: application/json'
+}
+DELETE() {
+	curl -Lk -XDELETE ${ENDPOINT}${1}
+}
+
+ENDPOINT=$1
+if [[ -z $ENDPOINT ]]; then
+	echo >&2 "USAGE: $0 <url>"
+	exit 1
+fi
+
+for stemcell in \
+	bosh-aws-xen-hvm-ubuntu-trusty-go_agent \
+	bosh-aws-xen-ubuntu-trusty-go_agent \
+	bosh-azure-hyperv-ubuntu-trusty-go_agent \
+	bosh-openstack-kvm-ubuntu-trusty-go_agent \
+	bosh-openstack-kvm-ubuntu-trusty-go_agent-raw \
+	bosh-vcloud-esxi-ubuntu-trusty-go_agent \
+	bosh-vsphere-esxi-ubuntu-trusty-go_agent \
+	bosh-warden-boshlite-ubuntu-trusty-go_agent
+do
+	POST '/v1/stemcell' '{"name":"'${stemcell}'","url":"https://bosh.io/d/stemcells/'${stemcell}'?v={{version}}"}'
+done
+
+for cpi in aws azure openstack rackhd softlayer vcloud vsphere
+do
+	POST '/v1/release' '{"name":"bosh-'${cpi}'-cpi","url":"https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-'${cpi}'-release?v={{version}}"}'
+done
+
+for release in \
+	bind9 \
+	cf-haproxy cf-subway consul \
+	docker-registry \
+	jumpbox \
+	route-registrar \
+	shell \
+	toolbelt \
+	vault
+do
+	POST '/v1/release' '{"name":"'${release}'","url":"https://bosh.io/d/github.com/cloudfoundry-community/'${release}'-boshrelease?v={{version}}"}'
+done
+
+echo "DONE"

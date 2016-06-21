@@ -1,0 +1,241 @@
+#!/bin/bash
+
+# indexer - A CLI for interacting with the Genesis Index
+#
+# author:  James Hunt <james@niftylogic.com>
+# created: 2016-06-22
+#
+
+[ -n "$INDEXER_DEBUG" ] && set -x
+GENESIS_INDEX=${GENESIS_INDEX:-https://genesis.starkandwayne.com/}
+GENESIS_INDEX=${GENESIS_INDEX%%/}
+
+need_auth() {
+	if [[ -z ${GENESIS_CREDS} ]]; then
+		echo >&2 "You must be authorized to perform this action."
+		echo >&2 "Try setting the GENESIS_CREDS environment variable to the username:password"
+		exit 1
+	fi
+}
+
+cmd_help() {
+	cat <<EOF
+USAGE: $0 version (release|stemcell) NAME [VERSION]
+       $0 show    (release|stemcell) NAME
+       $0 check   (release|stemcell) NAME VERSION
+       $0 create  (release|stemcell) NAME URL
+       $0 remove  (release|stemcell) NAME [VERSION]
+       $0 releases
+       $0 stemcells
+       $0 help
+EOF
+}
+
+cmd_create() {
+	local USAGE="create (release|stemcell) NAME URL"
+	local type=$1 ; shift
+	local name=$1 ; shift
+	local url=$1  ; shift
+
+	if [[ -z $type || -z $name || -z $url || -n $1 ]]; then
+		echo >&2 "USAGE: $0 $USAGE"
+		exit 1
+	fi
+
+	case $type in
+	(release|stemcell)
+		need_auth
+		curl --fail -Lsk -XPOST -u "${GENESIS_CREDS}" ${GENESIS_INDEX}/v1/${type} \
+			-d '{"name":"'$name'","url":"'$url'"}'
+		exit $?
+		;;
+	(*)
+		echo >&2 "unrecognized type '$type'"
+		echo >&2 "USAGE: $0 $USAGE"
+		exit 1
+		;;
+	esac
+	exit 0
+}
+
+cmd_remove() {
+	local USAGE="remove (release|stemcell) NAME [VERSION]"
+	local type=$1 ; shift
+	local name=$1 ; shift
+	local vers=$1 ; shift
+
+	if [[ -z $type || -z $name || -n $1 ]]; then
+		echo >&2 "USAGE: $0 $USAGE"
+		exit 1
+	fi
+
+	if [[ -z $vers ]]; then
+		echo     "This will delete all versions of the '${name}' ${type}!"
+		echo  -n "Are you sure? [yes/no]  "
+		read CONFIRM
+		if [[ ${CONFIRM} != "yes" ]]; then
+			echo "Aborting..."
+			exit 2
+		fi
+	fi
+
+	case $type in
+	(release|stemcell)
+		need_auth
+		if [[ -z $vers ]]; then
+			curl --fail -Lsk -XDELETE -u "${GENESIS_CREDS}" ${GENESIS_INDEX}/v1/${type}/${name}
+		else
+			curl --fail -Lsk -XDELETE -u "${GENESIS_CREDS}" ${GENESIS_INDEX}/v1/${type}/${name}/v/${vers}
+		fi
+		exit $?
+		;;
+	(*)
+		echo >&2 "unrecognized type '$type'"
+		echo >&2 "USAGE: $0 $USAGE"
+		exit 1
+		;;
+	esac
+	exit 0
+}
+
+cmd_check() {
+	local USAGE="check (release|stemcell) NAME VERSION"
+	local type=$1 ; shift
+	local name=$1 ; shift
+	local vers=$1 ; shift
+
+	if [[ -z $type || -z $name || -z $vers || -n $1 ]]; then
+		echo >&2 "USAGE: $0 $USAGE"
+		exit 1
+	fi
+
+	case $type in
+	(release|stemcell)
+		need_auth
+		curl --fail -Lsk -XPUT -u "${GENESIS_CREDS}" ${GENESIS_INDEX}/v1/${type}/${name}/v/${vers}
+		exit $?
+		;;
+	(*)
+		echo >&2 "unrecognized type '$type'"
+		echo >&2 "USAGE: $0 $USAGE"
+		exit 1
+		;;
+	esac
+	exit 0
+}
+
+cmd_version() {
+	local USAGE="version (release|stemcell) NAME [VERSION]"
+	local type=$1 ; shift
+	local name=$1 ; shift
+	local vers=$1 ; shift
+
+	if [[ -z $type || -z $name || -n $1 ]]; then
+		echo >&2 "USAGE: $0 $USAGE"
+		exit 1
+	fi
+
+	case $type in
+	(release|stemcell)
+		if [[ -z ${vers} ]]; then
+			curl --fail -Lsk -XGET ${GENESIS_INDEX}/v1/${type}/${name}/latest
+		else
+			curl --fail -Lsk -XGET ${GENESIS_INDEX}/v1/${type}/${name}/v/${vers}
+		fi
+		exit $?
+		;;
+	(*)
+		echo >&2 "unrecognized type '$type'"
+		echo >&2 "USAGE: $0 $USAGE"
+		exit 1
+		;;
+	esac
+	exit 0
+}
+
+cmd_show() {
+	local USAGE="show (release|stemcell) NAME"
+	local type=$1 ; shift
+	local name=$1 ; shift
+
+	if [[ -z $type || -z $name || -n $1 ]]; then
+		echo >&2 "USAGE: $0 $USAGE"
+		exit 1
+	fi
+
+	case $type in
+	(release|stemcell)
+		curl --fail -Lsk -XGET ${GENESIS_INDEX}/v1/${type}/${name}
+		exit $?
+		;;
+	(*)
+		echo >&2 "unrecognized type '$type'"
+		echo >&2 "USAGE: $0 $USAGE"
+		exit 1
+		;;
+	esac
+	exit 0
+}
+
+cmd_list() {
+	local type=$1 ; shift
+	local USAGE="$type"
+	type=${type%%s}
+
+	if [[ -z $type || -n $1 ]]; then
+		echo >&2 "USAGE: $0 $USAGE"
+		exit 1
+	fi
+
+	case $type in
+	(release|stemcell)
+		curl --fail -Lsk -XGET ${GENESIS_INDEX}/v1/${type}
+		exit $?
+		;;
+	(*)
+		echo >&2 "unrecognized type '$type'"
+		echo >&2 "USAGE: $0 $USAGE"
+		exit 1
+		;;
+	esac
+	exit 0
+}
+
+main() {
+	local command=$1 ; shift
+	if [[ -z $command ]]; then
+		command="help"
+	fi
+
+	case $command in
+	(help|-h|--help)
+		cmd_help $*
+		exit 0
+		;;
+	(create|new|track)
+		cmd_create $*
+		;;
+	(remove|rm|delete)
+		cmd_remove $*
+		;;
+	(check)
+		cmd_check $*
+		;;
+	(version)
+		cmd_version $*
+		;;
+	(show)
+		cmd_show $*
+		;;
+	(stemcells|releases)
+		cmd_list $command $*
+		;;
+	(*)
+		echo "Invalid command '$command'"
+		cmd_help
+		exit 1
+		;;
+	esac
+}
+
+main "$@"
