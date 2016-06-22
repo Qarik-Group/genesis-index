@@ -19,7 +19,7 @@ func Database(driver, dsn string) (*db.DB, error) {
 	s.Version(1, func(d *db.DB) error {
 		err := d.Exec(`
   CREATE TABLE releases (
-    name  VARCHAR(40)   NOT NULL PRIMARY KEY,
+    name  VARCHAR(200)  NOT NULL PRIMARY KEY,
     url   TEXT          NOT NULL
   )
 `)
@@ -29,7 +29,7 @@ func Database(driver, dsn string) (*db.DB, error) {
 
 		err = d.Exec(`
   CREATE TABLE stemcells (
-    name  VARCHAR(40)   NOT NULL PRIMARY KEY,
+    name  VARCHAR(200)  NOT NULL PRIMARY KEY,
     url   TEXT          NOT NULL
   )
 `)
@@ -39,11 +39,11 @@ func Database(driver, dsn string) (*db.DB, error) {
 
 		err = d.Exec(`
   CREATE TABLE release_versions (
-    name     VARCHAR(40)   NOT NULL,
+    name     VARCHAR(200)  NOT NULL,
     version  VARCHAR(20)   NOT NULL,
-    sha1     VARCHAR(40)   NOT NULL DEFAULT '',
+    sha1     VARCHAR(200)  NOT NULL DEFAULT '',
     url      TEXT          NOT NULL DEFAULT '',
-    valid    INTEGER(1)    NOT NULL DEFAULT 0,
+    valid    INTEGER       NOT NULL DEFAULT 0,
 
     UNIQUE (name, version)
   )
@@ -54,11 +54,11 @@ func Database(driver, dsn string) (*db.DB, error) {
 
 		err = d.Exec(`
   CREATE TABLE stemcell_versions (
-    name     VARCHAR(40)   NOT NULL,
+    name     VARCHAR(200)  NOT NULL,
     version  VARCHAR(20)   NOT NULL,
-    sha1     VARCHAR(40)   NOT NULL DEFAULT '',
+    sha1     VARCHAR(200)  NOT NULL DEFAULT '',
     url      TEXT          NOT NULL DEFAULT '',
-    valid    INTEGER(1)    NOT NULL DEFAULT 0,
+    valid    INTEGER       NOT NULL DEFAULT 0,
 
     UNIQUE (name, version)
   )

@@ -4,18 +4,20 @@ GET() {
 	curl -Lk -XGET ${ENDPOINT}${1}
 }
 PUT() {
-	curl -Lk -XPUT ${ENDPOINT}${1} --data "${2}" -H 'Content-type: application/json'
+	curl -Lk -XPUT -u "${AUTH_USER}:${AUTH_PASS}" ${ENDPOINT}${1} --data "${2}" -H 'Content-type: application/json'
 }
 POST() {
-	curl -Lk -XPOST ${ENDPOINT}${1} --data "${2}" -H 'Content-type: application/json'
+	curl -Lk -XPOST -u "${AUTH_USER}:${AUTH_PASS}" ${ENDPOINT}${1} --data "${2}" -H 'Content-type: application/json'
 }
 DELETE() {
-	curl -Lk -XDELETE ${ENDPOINT}${1}
+	curl -Lk -XDELETE -u "${AUTH_USER}:${AUTH_PASS}"  ${ENDPOINT}${1}
 }
 
-ENDPOINT=$1
-if [[ -z $ENDPOINT ]]; then
-	echo >&2 "USAGE: $0 <url>"
+ENDPOINT=$1  ; shift
+AUTH_USER=$1 ; shift
+AUTH_PASS=$1 ; shift
+if [[ -z $ENDPOINT || -z $AUTH_USER || -z $AUTH_PASS || -n $1 ]]; then
+	echo >&2 "USAGE: $0 <url> <user> <pass>"
 	exit 1
 fi
 

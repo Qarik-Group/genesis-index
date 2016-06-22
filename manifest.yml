@@ -1,6 +1,6 @@
 ---
 applications:
-  - name:    genesis.starkandwayne.com
+  - name:    genesis-index
     host:    genesis
     domain:  starkandwayne.com
     memory:  128M

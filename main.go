@@ -6,8 +6,10 @@ import (
 	"os"
 
 	"github.com/jhunt/go-db"
-	_ "github.com/mattn/go-sqlite3"
 	"github.com/starkandwayne/goutils/log"
+
+	_ "github.com/lib/pq"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
@@ -23,7 +25,7 @@ func main() {
 
 	var d *db.DB
 	if dsn, err := ParseVcap(os.Getenv("VCAP_SERVICES"), "postgres", "uri"); err == nil {
-		d, err = Database("postgres", dsn)
+		d, err = Database("postgres", fmt.Sprintf("%s?sslmode=disable", dsn))
 		if err != nil {
 			log.Infof("Unable to connect to database: %s", err)
 			return
