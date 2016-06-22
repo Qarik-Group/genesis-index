@@ -1,0 +1,20 @@
+{
+	"ImportPath": "github.com/starkandwayne/genesis-index",
+	"GoVersion": "go1.5",
+	"GodepVersion": "v74",
+	"Deps": [
+		{
+			"ImportPath": "github.com/jhunt/go-db",
+			"Rev": "2031f1e86b216e25b9eec481d16885d3012c205a"
+		},
+		{
+			"ImportPath": "github.com/mattn/go-sqlite3",
+			"Comment": "v1.1.0-69-g38ee283",
+			"Rev": "38ee283dabf11c9cbdb968eebd79b1fa7acbabe6"
+		},
+		{
+			"ImportPath": "github.com/starkandwayne/goutils/log",
+			"Rev": "2ed57be1d34986a6c3fb4c7c6b94d8fe75ea8cdd"
+		}
+	]
+}
