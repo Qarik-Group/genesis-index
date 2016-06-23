@@ -59,6 +59,12 @@ The Genesis Index API strives to be simple and clean
 GET /v1/release
 ```
 
+## Get Latest Versions of All Tracked Releases
+
+```
+GET /v1/release/latest
+```
+
 ## Get All Release Versions
 
 ```
@@ -123,6 +129,12 @@ DELETE /v1/release/:name/v/:version
 
 ```
 GET /v1/stemcell
+```
+
+## Get Latest Versions of All Tracked Stemcells
+
+```
+GET /v1/stemcell/latest
 ```
 
 ## Get All Stemcell Versions

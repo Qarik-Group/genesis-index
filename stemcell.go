@@ -74,7 +74,7 @@ WHERE name = $1
   AND valid = 1
 
 ORDER BY
-  version DESC`, name)
+  vnum DESC`, name)
 	if err != nil {
 		return l, err
 	}
@@ -98,6 +98,47 @@ ORDER BY
 	return l, nil
 }
 
+func FindLatestStemcellVersions(d *db.DB) ([]Stemcell, error) {
+	l := make([]Stemcell, 0)
+
+	r, err := d.Query(`
+SELECT
+  v.name,
+  v.version,
+  v.sha1,
+  v.url
+
+FROM
+  stemcell_versions v
+  INNER JOIN (
+    SELECT
+      name,
+      MAX(vnum) AS latest
+
+    FROM stemcell_versions
+    WHERE valid = 1
+    GROUP BY name
+  ) q
+
+  ON
+        q.name   = v.name
+    AND q.latest = v.vnum
+`)
+	if err != nil {
+		return l, err
+	}
+
+	for r.Next() {
+		var o Stemcell
+		if err = r.Scan(&o.Name, &o.Version, &o.SHA1, &o.URL); err != nil {
+			return l, err
+		}
+		l = append(l, o)
+	}
+
+	return l, nil
+}
+
 func FindStemcellVersion(d *db.DB, name, version string) (Stemcell, error) {
 	var o Stemcell
 
@@ -111,9 +152,23 @@ func FindStemcellVersion(d *db.DB, name, version string) (Stemcell, error) {
 	}
 
 	r, err := d.Query(fmt.Sprintf(`
-SELECT name, version, sha1, url
-FROM stemcell_versions
-WHERE name = $1 AND valid = 1 %s`, where), args...)
+SELECT
+  name,
+  version,
+  sha1,
+  url
+
+FROM
+  stemcell_versions
+
+WHERE name = $1
+  AND valid = 1
+  %s
+
+ORDER BY
+  vnum DESC
+LIMIT 1
+`, where), args...)
 	if err != nil {
 		return o, err
 	}
@@ -166,8 +221,11 @@ func CheckStemcellVersion(d *db.DB, name, version string) {
 	n, _ := d.Count(`SELECT * FROM stemcell_versions WHERE name = $1 AND version = $2`, name, version)
 	if n == 0 {
 		recheck = false
-		err = d.Exec(`INSERT INTO stemcell_versions (name, version, valid) VALUES ($1, $2, 0)`,
-			name, version)
+		num, err := vnum(version)
+		if err == nil {
+			d.Exec(`INSERT INTO stemcell_versions (name, version, vnum, valid) VALUES ($1, $2, $3, 0)`,
+				name, version, num)
+		}
 	}
 
 	/* download and SHA1 the file */

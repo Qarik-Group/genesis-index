@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"os"
 	"regexp"
+	"strconv"
+	"strings"
 
 	"github.com/starkandwayne/goutils/log"
 )
@@ -103,4 +105,23 @@ func authed(w http.ResponseWriter, r *http.Request) bool {
 	log.Debugf("authorization failed for user '%s'", try_user)
 	w.WriteHeader(403)
 	return false
+}
+
+func vnum(v string) (uint64, error) {
+	sem := strings.Split(v, ".")
+	for len(sem) < 3 {
+		sem = append(sem, "0")
+	}
+
+	var n uint64 = 0
+	for i := 0; i < 3; i++ {
+		u, err := strconv.ParseUint(sem[i], 10, 64)
+		if err != nil {
+			log.Debugf("vnum had an issue with '%s': %s", v, err)
+			return n, err
+		}
+		n = n*1000 + u
+	}
+
+	return n, nil
 }

@@ -25,6 +25,7 @@ USAGE: $0 version (release|stemcell) NAME [VERSION]
        $0 check   (release|stemcell) NAME VERSION
        $0 create  (release|stemcell) NAME URL
        $0 remove  (release|stemcell) NAME [VERSION]
+       $0 latest  (releases|stemcells)
        $0 releases
        $0 stemcells
        $0 help
@@ -177,6 +178,33 @@ cmd_show() {
 	exit 0
 }
 
+cmd_latest() {
+	local USAGE="latest (releases|stemcells)"
+	local type=$1 ; shift
+
+	if [[ -z $type || -n $1 ]]; then
+		echo >&2 "USAGE: $0 $USAGE"
+		exit 1
+	fi
+
+	case $type in
+	(release|releases)
+		curl --fail -Lsk -XGET ${GENESIS_INDEX}/v1/release/latest
+		exit $?
+		;;
+	(stemcell|stemcells)
+		curl --fail -Lsk -XGET ${GENESIS_INDEX}/v1/stemcell/latest
+		exit $?
+		;;
+	(*)
+		echo >&2 "unrecognized type '$type'"
+		echo >&2 "USAGE: $0 $USAGE"
+		exit 1
+		;;
+	esac
+	exit 0
+}
+
 cmd_list() {
 	local type=$1 ; shift
 	local USAGE="$type"
@@ -226,6 +254,9 @@ main() {
 		;;
 	(show)
 		cmd_show $*
+		;;
+	(latest)
+		cmd_latest $*
 		;;
 	(stemcells|releases)
 		cmd_list $command $*

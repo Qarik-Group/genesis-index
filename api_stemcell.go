@@ -36,6 +36,12 @@ func (api StemcellAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		respond(w, err, 200, "success")
 		return
 
+	case match(r, `GET /v1/stemcell/latest`):
+		log.Debugf("retrieving latest versions of all stemcells")
+		stemcells, err := FindLatestStemcellVersions(api.db)
+		respond(w, err, 200, stemcells)
+		return
+
 	case match(r, `GET /v1/stemcell/[^/]+`):
 		name := extract(r, `/v1/stemcell/([^/]+)$`)
 		log.Debugf("retrieving all versions of stemcell '%s'", name)
