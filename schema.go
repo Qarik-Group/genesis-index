@@ -41,7 +41,7 @@ func Database(driver, dsn string) (*db.DB, error) {
   CREATE TABLE release_versions (
     name     VARCHAR(200)  NOT NULL,
     version  VARCHAR(20)   NOT NULL,
-    vnum     INTEGER       NOT NULL,
+    vnum     BIGINT        NOT NULL,
     sha1     VARCHAR(200)  NOT NULL DEFAULT '',
     url      TEXT          NOT NULL DEFAULT '',
     valid    INTEGER       NOT NULL DEFAULT 0,
@@ -57,7 +57,7 @@ func Database(driver, dsn string) (*db.DB, error) {
   CREATE TABLE stemcell_versions (
     name     VARCHAR(200)  NOT NULL,
     version  VARCHAR(20)   NOT NULL,
-    vnum     INTEGER       NOT NULL,
+    vnum     BIGINT        NOT NULL,
     sha1     VARCHAR(200)  NOT NULL DEFAULT '',
     url      TEXT          NOT NULL DEFAULT '',
     valid    INTEGER       NOT NULL DEFAULT 0,

@@ -223,8 +223,11 @@ func CheckStemcellVersion(d *db.DB, name, version string) {
 		recheck = false
 		num, err := vnum(version)
 		if err == nil {
-			d.Exec(`INSERT INTO stemcell_versions (name, version, vnum, valid) VALUES ($1, $2, $3, 0)`,
+			err = d.Exec(`INSERT INTO stemcell_versions (name, version, vnum, valid) VALUES ($1, $2, $3, 0)`,
 				name, version, num)
+			if err != nil {
+				log.Debugf("unable to check version '%s' of '%s': %s", version, name, err)
+			}
 		}
 	}
 
