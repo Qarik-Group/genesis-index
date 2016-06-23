@@ -89,7 +89,7 @@ POST /v1/release
 }
 ```
 
-## Check a Specific Version
+## Check a Specific Release Version
 
 (this endpoint requires authentication)
 
@@ -149,7 +149,7 @@ POST /v1/stemcell
 }
 ```
 
-## Check a Specific Version
+## Check a Specific Stemcell Version
 
 (this endpoint requires authentication)
 
