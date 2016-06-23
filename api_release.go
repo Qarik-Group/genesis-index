@@ -61,6 +61,13 @@ func (api ReleaseAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		respond(w, err, 200, release)
 		return
 
+	case match(r, `GET /v1/release/[^/]+/metadata`):
+		name := extract(r, `/v1/release/([^/]+)/metadata`)
+		log.Debugf("retrieving latest version of release '%s'", name)
+		release, err := FindRelease(api.db, name)
+		respond(w, err, 200, release)
+		return
+
 	case match(r, `GET /v1/release/[^/]+/latest`):
 		name := extract(r, `/v1/release/([^/]+)/latest$`)
 		log.Debugf("retrieving latest version of release '%s'", name)

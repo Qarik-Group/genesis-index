@@ -36,7 +36,7 @@ done
 
 for cpi in aws azure openstack rackhd softlayer vcloud vsphere
 do
-	POST '/v1/release' '{"name":"bosh-'${cpi}'-cpi","url":"https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-'${cpi}'-release?v={{version}}"}'
+	POST '/v1/release' '{"name":"bosh-'${cpi}'-cpi","url":"https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-'${cpi}'-cpi-release?v={{version}}"}'
 done
 
 for release in \

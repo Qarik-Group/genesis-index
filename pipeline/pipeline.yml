@@ -1,6 +1,7 @@
 groups:
 - jobs:
   - bind9
+  - bolo
   - bosh-aws-cpi
   - bosh-azure-cpi
   - bosh-openstack-cpi
@@ -50,6 +51,33 @@ jobs:
         GENESIS_CREDS: REDACTED:REDACTED
         GENESIS_INDEX: https://genesis.starkandwayne.com
         SUBJECT: bind9
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: bolo
+  plan:
+  - get: bolo
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: bolo
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: bolo
       platform: linux
       run:
         args: []
@@ -737,6 +765,8 @@ meta:
     index: https://genesis.starkandwayne.com
     password: REDACTED
     username: REDACTED
+  github:
+    access_token: REDACTED
 resource_types:
 - name: script
   source:
@@ -770,7 +800,7 @@ resources:
         exit 1
       fi
 
-      VERSION=$(cat ${CHECK_TYPE}/version)
+      VERSION=$(cat ${CHECK_TYPE}/version | sed -e 's/^v//')
 
       echo
       echo "Updating the index for ${CHECK_TYPE} ${SUBJECT} v${VERSION}"
@@ -790,6 +820,12 @@ resources:
   source:
     repository: cloudfoundry-community/bind9-boshrelease
   type: bosh-io-release
+- name: bolo
+  source:
+    access_token: REDACTED
+    repository: bolo-boshrelease
+    user: cloudfoundry-community
+  type: github-release
 - name: bosh-aws-cpi
   source:
     repository: cloudfoundry-incubator/bosh-aws-cpi-release

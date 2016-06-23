@@ -4,6 +4,8 @@ meta:
     index: https://genesis.starkandwayne.com
     username: (( vault "secret/pipelines/genesis-index/auth:username" ))
     password: (( vault "secret/pipelines/genesis-index/auth:password" ))
+  github:
+    access_token: (( vault "secret/pipelines/genesis-index/github:token" ))
 
 resource_types:
   - name: script

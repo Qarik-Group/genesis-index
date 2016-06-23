@@ -65,6 +65,12 @@ GET /v1/release
 GET /v1/release/:name
 ```
 
+## Get Release Metadata
+
+```
+GET /v1/release/:name/metadata
+```
+
 ## Get The Latest Release Version
 
 ```
@@ -123,6 +129,12 @@ GET /v1/stemcell
 
 ```
 GET /v1/stemcell/:name
+```
+
+## Get Stemcell Metadata
+
+```
+GET /v1/stemcell/:name/metadata
 ```
 
 ## Get The Latest Stemcell Version

@@ -22,7 +22,7 @@ if [[ -z ${SUBJECT} ]]; then
   exit 1
 fi
 
-VERSION=$(cat ${CHECK_TYPE}/version)
+VERSION=$(cat ${CHECK_TYPE}/version | sed -e 's/^v//')
 
 echo
 echo "Updating the index for ${CHECK_TYPE} ${SUBJECT} v${VERSION}"
