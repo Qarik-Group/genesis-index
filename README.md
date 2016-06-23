@@ -185,6 +185,7 @@ DELETE /v1/stemcell/:name
 DELETE /v1/stemcell/:name/v/:version
 ```
 
+
 Installation And Operation
 ==========================
 
@@ -202,3 +203,26 @@ The following environment variables should also be set:
 
 - `AUTH_USERNAME` - The username for authenticated endpoints
 - `AUTH_PASSWORD` - The password for authenticated endpoints
+
+
+Pipelining The Updates
+======================
+
+Tracking all those versions and letting Genesis Index know when
+they need updated is tedious work.  Let's make the robots do it!
+
+The `pipeline/` directory contains the scripts for building a
+concourse pipeline based off of the current configured set of
+tracked releases and stemcells.  To use it:
+
+```
+./pipeline/repipe
+```
+
+At the moment, it's tied directly to the Stark & Wayne concourse
+installation, under the alias `sw`.  That may change in the future
+
+(Note: the `ci/` directory name is reserved for a future in which
+we want / need to do CI/CD for the Genesis Index code / deployment
+itself.)
+if anyone is interested in more flexibility.
