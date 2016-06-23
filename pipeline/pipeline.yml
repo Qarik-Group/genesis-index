@@ -1,0 +1,893 @@
+groups:
+- jobs:
+  - bind9
+  - bosh-aws-cpi
+  - bosh-azure-cpi
+  - bosh-openstack-cpi
+  - bosh-rackhd-cpi
+  - bosh-softlayer-cpi
+  - bosh-vcloud-cpi
+  - bosh-vsphere-cpi
+  - cf-haproxy
+  - cf-subway
+  - consul
+  - docker-registry
+  - jumpbox
+  - route-registrar
+  - shell
+  - shield
+  - toolbelt
+  - vault
+  name: releases
+- jobs:
+  - bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+  - bosh-aws-xen-ubuntu-trusty-go_agent
+  - bosh-azure-hyperv-ubuntu-trusty-go_agent
+  - bosh-openstack-kvm-ubuntu-trusty-go_agent-raw
+  - bosh-openstack-kvm-ubuntu-trusty-go_agent
+  - bosh-vcloud-esxi-ubuntu-trusty-go_agent
+  - bosh-vsphere-esxi-ubuntu-trusty-go_agent
+  - bosh-warden-boshlite-ubuntu-trusty-go_agent
+  name: stemcells
+jobs:
+- name: bind9
+  plan:
+  - get: bind9
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: bind9
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: bind9
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: bosh-aws-cpi
+  plan:
+  - get: bosh-aws-cpi
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: bosh-aws-cpi
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: bosh-aws-cpi
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: bosh-azure-cpi
+  plan:
+  - get: bosh-azure-cpi
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: bosh-azure-cpi
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: bosh-azure-cpi
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: bosh-openstack-cpi
+  plan:
+  - get: bosh-openstack-cpi
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: bosh-openstack-cpi
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: bosh-openstack-cpi
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: bosh-rackhd-cpi
+  plan:
+  - get: bosh-rackhd-cpi
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: bosh-rackhd-cpi
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: bosh-rackhd-cpi
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: bosh-softlayer-cpi
+  plan:
+  - get: bosh-softlayer-cpi
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: bosh-softlayer-cpi
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: bosh-softlayer-cpi
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: bosh-vcloud-cpi
+  plan:
+  - get: bosh-vcloud-cpi
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: bosh-vcloud-cpi
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: bosh-vcloud-cpi
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: bosh-vsphere-cpi
+  plan:
+  - get: bosh-vsphere-cpi
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: bosh-vsphere-cpi
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: bosh-vsphere-cpi
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: cf-haproxy
+  plan:
+  - get: cf-haproxy
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: cf-haproxy
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: cf-haproxy
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: cf-subway
+  plan:
+  - get: cf-subway
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: cf-subway
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: cf-subway
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: consul
+  plan:
+  - get: consul
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: consul
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: consul
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: docker-registry
+  plan:
+  - get: docker-registry
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: docker-registry
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: docker-registry
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: jumpbox
+  plan:
+  - get: jumpbox
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: jumpbox
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: jumpbox
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: route-registrar
+  plan:
+  - get: route-registrar
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: route-registrar
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: route-registrar
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: shell
+  plan:
+  - get: shell
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: shell
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: shell
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: shield
+  plan:
+  - get: shield
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: shield
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: shield
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: toolbelt
+  plan:
+  - get: toolbelt
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: toolbelt
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: toolbelt
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: vault
+  plan:
+  - get: vault
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: vault
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: vault
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+  plan:
+  - get: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+        path: stemcell
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: stemcell
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: bosh-aws-xen-ubuntu-trusty-go_agent
+  plan:
+  - get: bosh-aws-xen-ubuntu-trusty-go_agent
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: bosh-aws-xen-ubuntu-trusty-go_agent
+        path: stemcell
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: stemcell
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: bosh-aws-xen-ubuntu-trusty-go_agent
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: bosh-azure-hyperv-ubuntu-trusty-go_agent
+  plan:
+  - get: bosh-azure-hyperv-ubuntu-trusty-go_agent
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: bosh-azure-hyperv-ubuntu-trusty-go_agent
+        path: stemcell
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: stemcell
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: bosh-azure-hyperv-ubuntu-trusty-go_agent
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: bosh-openstack-kvm-ubuntu-trusty-go_agent-raw
+  plan:
+  - get: bosh-openstack-kvm-ubuntu-trusty-go_agent-raw
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: bosh-openstack-kvm-ubuntu-trusty-go_agent-raw
+        path: stemcell
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: stemcell
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: bosh-openstack-kvm-ubuntu-trusty-go_agent-raw
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+  plan:
+  - get: bosh-openstack-kvm-ubuntu-trusty-go_agent
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+        path: stemcell
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: stemcell
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: bosh-openstack-kvm-ubuntu-trusty-go_agent
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: bosh-vcloud-esxi-ubuntu-trusty-go_agent
+  plan:
+  - get: bosh-vcloud-esxi-ubuntu-trusty-go_agent
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: bosh-vcloud-esxi-ubuntu-trusty-go_agent
+        path: stemcell
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: stemcell
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: bosh-vcloud-esxi-ubuntu-trusty-go_agent
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
+  plan:
+  - get: bosh-vsphere-esxi-ubuntu-trusty-go_agent
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
+        path: stemcell
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: stemcell
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: bosh-vsphere-esxi-ubuntu-trusty-go_agent
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: bosh-warden-boshlite-ubuntu-trusty-go_agent
+  plan:
+  - get: bosh-warden-boshlite-ubuntu-trusty-go_agent
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: bosh-warden-boshlite-ubuntu-trusty-go_agent
+        path: stemcell
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: stemcell
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: bosh-warden-boshlite-ubuntu-trusty-go_agent
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+meta:
+  genesis:
+    index: https://genesis.starkandwayne.com
+    password: REDACTED
+    username: REDACTED
+resource_types:
+- name: script
+  source:
+    repository: cfcommunity/script-resource
+  type: docker-image
+resources:
+- name: version-check-script
+  source:
+    body: |
+      #!/bin/bash
+      set -eu
+
+      GENESIS_INDEX=${GENESIS_INDEX:-https://genesis.starkandwayne.com}
+      GENESIS_INDEX=${GENESIS_INDEX%/}
+
+      if [[ -z ${GENESIS_CREDS} ]]; then
+        echo >&2 "GENESIS_CREDS environment variable is not set"
+        echo >&2 "(is your concourse pipeline misconfigured?)"
+        exit 1
+      fi
+
+      if [[ -z ${CHECK_TYPE} ]]; then
+        echo >&2 "CHECK_TYPE environment variable is not set"
+        echo >&2 "(is your concourse pipeline misconfigured?)"
+        exit 1
+      fi
+
+      if [[ -z ${SUBJECT} ]]; then
+        echo >&2 "SUBJECT environment variable is not set"
+        echo >&2 "(is your concourse pipeline misconfigured?)"
+        exit 1
+      fi
+
+      VERSION=$(cat ${CHECK_TYPE}/version)
+
+      echo
+      echo "Updating the index for ${CHECK_TYPE} ${SUBJECT} v${VERSION}"
+      echo
+      echo "$ curl --fail -XPUT -Lvk -u \"\${GENESIS_CREDS}\" \\"
+      echo "       ${GENESIS_INDEX}/v1/${CHECK_TYPE}/${SUBJECT}/v/${VERSION}"
+      curl --fail -XPUT -Lvk -u "${GENESIS_CREDS}" \
+        ${GENESIS_INDEX}/v1/${CHECK_TYPE}/${SUBJECT}/v/${VERSION}
+
+      echo
+      echo "SUCCESS"
+      echo
+      exit 0
+    filename: check-version
+  type: script
+- name: bind9
+  source:
+    repository: cloudfoundry-community/bind9-boshrelease
+  type: bosh-io-release
+- name: bosh-aws-cpi
+  source:
+    repository: cloudfoundry-incubator/bosh-aws-cpi-release
+  type: bosh-io-release
+- name: bosh-azure-cpi
+  source:
+    repository: cloudfoundry-incubator/bosh-azure-cpi-release
+  type: bosh-io-release
+- name: bosh-openstack-cpi
+  source:
+    repository: cloudfoundry-incubator/bosh-openstack-cpi-release
+  type: bosh-io-release
+- name: bosh-rackhd-cpi
+  source:
+    repository: cloudfoundry-incubator/bosh-rackhd-cpi-release
+  type: bosh-io-release
+- name: bosh-softlayer-cpi
+  source:
+    repository: cloudfoundry-incubator/bosh-softlayer-cpi-release
+  type: bosh-io-release
+- name: bosh-vcloud-cpi
+  source:
+    repository: cloudfoundry-incubator/bosh-vcloud-cpi-release
+  type: bosh-io-release
+- name: bosh-vsphere-cpi
+  source:
+    repository: cloudfoundry-incubator/bosh-vsphere-cpi-release
+  type: bosh-io-release
+- name: cf-haproxy
+  source:
+    repository: cloudfoundry-community/cf-haproxy-boshrelease
+  type: bosh-io-release
+- name: cf-subway
+  source:
+    repository: cloudfoundry-community/cf-subway-boshrelease
+  type: bosh-io-release
+- name: consul
+  source:
+    repository: cloudfoundry-community/consul-boshrelease
+  type: bosh-io-release
+- name: docker-registry
+  source:
+    repository: cloudfoundry-community/docker-registry-boshrelease
+  type: bosh-io-release
+- name: jumpbox
+  source:
+    repository: cloudfoundry-community/jumpbox-boshrelease
+  type: bosh-io-release
+- name: route-registrar
+  source:
+    repository: cloudfoundry-community/route-registrar-boshrelease
+  type: bosh-io-release
+- name: shell
+  source:
+    repository: cloudfoundry-community/shell-boshrelease
+  type: bosh-io-release
+- name: shield
+  source:
+    repository: starkandwayne/shield-boshrelease
+  type: bosh-io-release
+- name: toolbelt
+  source:
+    repository: cloudfoundry-community/toolbelt-boshrelease
+  type: bosh-io-release
+- name: vault
+  source:
+    repository: cloudfoundry-community/vault-boshrelease
+  type: bosh-io-release
+- name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+  source:
+    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+  type: bosh-io-stemcell
+- name: bosh-aws-xen-ubuntu-trusty-go_agent
+  source:
+    name: bosh-aws-xen-ubuntu-trusty-go_agent
+  type: bosh-io-stemcell
+- name: bosh-azure-hyperv-ubuntu-trusty-go_agent
+  source:
+    name: bosh-azure-hyperv-ubuntu-trusty-go_agent
+  type: bosh-io-stemcell
+- name: bosh-openstack-kvm-ubuntu-trusty-go_agent-raw
+  source:
+    name: bosh-openstack-kvm-ubuntu-trusty-go_agent-raw
+  type: bosh-io-stemcell
+- name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+  source:
+    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+  type: bosh-io-stemcell
+- name: bosh-vcloud-esxi-ubuntu-trusty-go_agent
+  source:
+    name: bosh-vcloud-esxi-ubuntu-trusty-go_agent
+  type: bosh-io-stemcell
+- name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
+  source:
+    name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
+  type: bosh-io-stemcell
+- name: bosh-warden-boshlite-ubuntu-trusty-go_agent
+  source:
+    name: bosh-warden-boshlite-ubuntu-trusty-go_agent
+  type: bosh-io-stemcell
+

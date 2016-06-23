@@ -1,0 +1,38 @@
+#!/bin/bash
+set -eu
+
+GENESIS_INDEX=${GENESIS_INDEX:-https://genesis.starkandwayne.com}
+GENESIS_INDEX=${GENESIS_INDEX%/}
+
+if [[ -z ${GENESIS_CREDS} ]]; then
+  echo >&2 "GENESIS_CREDS environment variable is not set"
+  echo >&2 "(is your concourse pipeline misconfigured?)"
+  exit 1
+fi
+
+if [[ -z ${CHECK_TYPE} ]]; then
+  echo >&2 "CHECK_TYPE environment variable is not set"
+  echo >&2 "(is your concourse pipeline misconfigured?)"
+  exit 1
+fi
+
+if [[ -z ${SUBJECT} ]]; then
+  echo >&2 "SUBJECT environment variable is not set"
+  echo >&2 "(is your concourse pipeline misconfigured?)"
+  exit 1
+fi
+
+VERSION=$(cat ${CHECK_TYPE}/version)
+
+echo
+echo "Updating the index for ${CHECK_TYPE} ${SUBJECT} v${VERSION}"
+echo
+echo "$ curl --fail -XPUT -Lvk -u \"\${GENESIS_CREDS}\" \\"
+echo "       ${GENESIS_INDEX}/v1/${CHECK_TYPE}/${SUBJECT}/v/${VERSION}"
+curl --fail -XPUT -Lvk -u "${GENESIS_CREDS}" \
+  ${GENESIS_INDEX}/v1/${CHECK_TYPE}/${SUBJECT}/v/${VERSION}
+
+echo
+echo "SUCCESS"
+echo
+exit 0

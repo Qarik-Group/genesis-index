@@ -1,0 +1,19 @@
+---
+meta:
+  genesis:
+    index: https://genesis.starkandwayne.com
+    username: (( vault "secret/pipelines/genesis-index/auth:username" ))
+    password: (( vault "secret/pipelines/genesis-index/auth:password" ))
+
+resource_types:
+  - name: script
+    type: docker-image
+    source:
+      repository: cfcommunity/script-resource
+
+resources:
+  - name: version-check-script
+    type: script
+    source:
+      filename: check-version
+      body:     (( file "check-version" ))
