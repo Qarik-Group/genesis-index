@@ -52,4 +52,16 @@ do
 	POST '/v1/release' '{"name":"'${release}'","url":"https://bosh.io/d/github.com/cloudfoundry-community/'${release}'-boshrelease?v={{version}}"}'
 done
 
+for release in \
+	shield
+do
+	POST '/v1/release' '{"name":"'${release}'","url":"https://bosh.io/d/github.com/starkandwayne/'${release}'-boshrelease?v={{version}}"}'
+done
+
+for release in \
+	bolo
+do
+	POST '/v1/release' '{"name":"'${release}'","url":"https://github.com/cloudfoundry-community/'${release}'-boshrelease/releases/download/v{{version}}/'${release}'-{{version}}.tgz"}'
+done
+
 echo "DONE"
