@@ -9,15 +9,22 @@ groups:
   - bosh-softlayer-cpi
   - bosh-vcloud-cpi
   - bosh-vsphere-cpi
+  - bosh
   - cf-haproxy
   - cf-subway
+  - cf
+  - concourse
   - consul
+  - diego
   - docker-registry
+  - garden-linux
+  - garden-runc
   - jumpbox
   - route-registrar
   - shell
   - shield
   - toolbelt
+  - uaa
   - vault
   name: releases
 - jobs:
@@ -274,6 +281,33 @@ jobs:
     task: update-index
   public: true
   serial: false
+- name: bosh
+  plan:
+  - get: bosh
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: bosh
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: bosh
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
 - name: cf-haproxy
   plan:
   - get: cf-haproxy
@@ -328,6 +362,60 @@ jobs:
     task: update-index
   public: true
   serial: false
+- name: cf
+  plan:
+  - get: cf
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: cf
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: cf
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: concourse
+  plan:
+  - get: concourse
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: concourse
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: concourse
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
 - name: consul
   plan:
   - get: consul
@@ -355,6 +443,33 @@ jobs:
     task: update-index
   public: true
   serial: false
+- name: diego
+  plan:
+  - get: diego
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: diego
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: diego
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
 - name: docker-registry
   plan:
   - get: docker-registry
@@ -375,6 +490,60 @@ jobs:
         GENESIS_CREDS: REDACTED:REDACTED
         GENESIS_INDEX: https://genesis.starkandwayne.com
         SUBJECT: docker-registry
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: garden-linux
+  plan:
+  - get: garden-linux
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: garden-linux
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: garden-linux
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: garden-runc
+  plan:
+  - get: garden-runc
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: garden-runc
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: garden-runc
       platform: linux
       run:
         args: []
@@ -510,6 +679,33 @@ jobs:
         GENESIS_CREDS: REDACTED:REDACTED
         GENESIS_INDEX: https://genesis.starkandwayne.com
         SUBJECT: toolbelt
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: uaa
+  plan:
+  - get: uaa
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: uaa
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: uaa
       platform: linux
       run:
         args: []
@@ -854,6 +1050,10 @@ resources:
   source:
     repository: cloudfoundry-incubator/bosh-vsphere-cpi-release
   type: bosh-io-release
+- name: bosh
+  source:
+    repository: cloudfoundry/bosh
+  type: bosh-io-release
 - name: cf-haproxy
   source:
     repository: cloudfoundry-community/cf-haproxy-boshrelease
@@ -862,13 +1062,33 @@ resources:
   source:
     repository: cloudfoundry-community/cf-subway-boshrelease
   type: bosh-io-release
+- name: cf
+  source:
+    repository: cloudfoundry/cf-release
+  type: bosh-io-release
+- name: concourse
+  source:
+    repository: concourse/concourse
+  type: bosh-io-release
 - name: consul
   source:
     repository: cloudfoundry-community/consul-boshrelease
   type: bosh-io-release
+- name: diego
+  source:
+    repository: cloudfoundry-incubator/diego-release
+  type: bosh-io-release
 - name: docker-registry
   source:
     repository: cloudfoundry-community/docker-registry-boshrelease
+  type: bosh-io-release
+- name: garden-linux
+  source:
+    repository: cloudfoundry-incubator/garden-linux-release
+  type: bosh-io-release
+- name: garden-runc
+  source:
+    repository: cloudfoundry-incubator/garden-runc-release
   type: bosh-io-release
 - name: jumpbox
   source:
@@ -889,6 +1109,10 @@ resources:
 - name: toolbelt
   source:
     repository: cloudfoundry-community/toolbelt-boshrelease
+  type: bosh-io-release
+- name: uaa
+  source:
+    repository: cloudfoundry/uaa-release
   type: bosh-io-release
 - name: vault
   source:
