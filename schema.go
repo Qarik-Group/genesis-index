@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/jhunt/go-db"
 )
 
@@ -16,7 +18,7 @@ func Database(driver, dsn string) (*db.DB, error) {
 	}
 
 	s := db.NewSchema()
-	s.Version(1, func(d *db.DB) error {
+	s.Version(1, func(d *db.DB) error { // {{{
 		err := d.Exec(`
   CREATE TABLE releases (
     name  VARCHAR(200)  NOT NULL PRIMARY KEY,
@@ -70,7 +72,34 @@ func Database(driver, dsn string) (*db.DB, error) {
 		}
 
 		return nil
-	})
+	}) // }}}
+	s.Version(2, func(d *db.DB) error { // {{{
+		tables := []string{"release_versions", "stemcell_versions"}
+
+		for _, table := range tables {
+			r, err := d.Query(fmt.Sprintf(`SELECT name, version FROM %s`, table))
+			if err != nil {
+				return err
+			}
+			for r.Next() {
+				var name, version string
+				if err = r.Scan(&name, &version); err != nil {
+					return err
+				}
+				n, err := vnum(version)
+				if err != nil {
+					return err
+				}
+				err = d.Exec(fmt.Sprintf(`UPDATE %s SET vnum = $1 WHERE name = $2 AND version = $3`, table),
+					n, name, version)
+				if err != nil {
+					return err
+				}
+			}
+		}
+
+		return nil
+	}) // }}}
 
 	err = s.Migrate(d, db.Latest)
 	if err != nil {

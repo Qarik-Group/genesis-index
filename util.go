@@ -120,7 +120,7 @@ func vnum(v string) (uint64, error) {
 			log.Debugf("vnum had an issue with '%s': %s", v, err)
 			return n, err
 		}
-		n = n*1000 + u
+		n = n*1000000 + u
 	}
 
 	return n, nil
