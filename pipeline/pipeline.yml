@@ -23,6 +23,7 @@ groups:
   - route-registrar
   - shell
   - shield
+  - slack-notification-resource
   - toolbelt
   - uaa
   - vault
@@ -659,6 +660,33 @@ jobs:
     task: update-index
   public: true
   serial: false
+- name: slack-notification-resource
+  plan:
+  - get: slack-notification-resource
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: slack-notification-resource
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: slack-notification-resource
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
 - name: toolbelt
   plan:
   - get: toolbelt
@@ -1105,6 +1133,10 @@ resources:
 - name: shield
   source:
     repository: starkandwayne/shield-boshrelease
+  type: bosh-io-release
+- name: slack-notification-resource
+  source:
+    repository: cloudfoundry-community/slack-notification-resource-boshrelease
   type: bosh-io-release
 - name: toolbelt
   source:
