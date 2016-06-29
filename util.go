@@ -65,19 +65,21 @@ func respond(w http.ResponseWriter, e error, status int, payload interface{}) {
 		return
 	}
 
-	if s, ok := payload.(string); ok {
-		fmt.Printf("SEND %d %s\n", status, s)
-		payload = struct {
-			M string `json:"m"`
-		}{M: s}
-	}
+	if payload != nil {
+		if s, ok := payload.(string); ok {
+			fmt.Printf("SEND %d %s\n", status, s)
+			payload = struct {
+				M string `json:"m"`
+			}{M: s}
+		}
 
-	b, err := json.Marshal(payload)
-	if err == nil {
-		w.WriteHeader(status)
-		fmt.Fprintf(w, "%s\n", string(b))
-	} else {
-		bail(w, err)
+		b, err := json.Marshal(payload)
+		if err == nil {
+			w.WriteHeader(status)
+			fmt.Fprintf(w, "%s\n", string(b))
+		} else {
+			bail(w, err)
+		}
 	}
 	return
 }
