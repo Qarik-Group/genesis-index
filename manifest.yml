@@ -1,7 +1,8 @@
 ---
 applications:
-  - name:    genesis-index
-    host:    genesis
-    domain:  starkandwayne.com
-    memory:  128M
-    command: genesis-index
+  - name:      genesis-index
+    host:      genesis
+    domain:    starkandwayne.com
+    memory:    64M
+    command:   genesis-index
+    buildpack: go_buildpack
