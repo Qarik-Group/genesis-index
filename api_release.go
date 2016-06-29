@@ -59,6 +59,19 @@ func (api ReleaseAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		respond(w, err, 200, "deleted")
 		return
 
+	case match(r, `GET /v1/release/[^/]+/v/[^/]+\.tgz`):
+		name := extract(r, `/v1/release/([^/]+)/v/[^/]+\.tgz`)
+		vers := extract(r, `/v1/release/[^/]+/v/([^/]+)\.tgz`)
+		log.Debugf("retrieving version '%s' (tarball) of release '%s'", vers, name)
+		release, err := FindReleaseVersion(api.db, name, vers)
+		if err != nil {
+			bail(w, err)
+			return
+		}
+		w.Header().Set("Location", release.URL)
+		w.WriteHeader(303)
+		return
+
 	case match(r, `GET /v1/release/[^/]+/v/[^/]+`):
 		name := extract(r, `/v1/release/([^/]+)/v/[^/]+`)
 		vers := extract(r, `/v1/release/[^/]+/v/([^/]+)`)
@@ -72,6 +85,18 @@ func (api ReleaseAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		log.Debugf("retrieving latest version of release '%s'", name)
 		release, err := FindRelease(api.db, name)
 		respond(w, err, 200, release)
+		return
+
+	case match(r, `GET /v1/release/[^/]+/latest\.tgz`):
+		name := extract(r, `/v1/release/([^/]+)/latest\.tgz`)
+		log.Debugf("retrieving latest (tarball) version of release '%s'", name)
+		release, err := FindReleaseVersion(api.db, name, "")
+		if err != nil {
+			bail(w, err)
+			return
+		}
+		w.Header().Set("Location", release.URL)
+		w.WriteHeader(303)
 		return
 
 	case match(r, `GET /v1/release/[^/]+/latest`):

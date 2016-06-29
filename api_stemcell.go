@@ -59,6 +59,19 @@ func (api StemcellAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		respond(w, err, 200, "deleted")
 		return
 
+	case match(r, `GET /v1/stemcell/[^/]+/v/[^/]+\.tgz`):
+		name := extract(r, `/v1/stemcell/([^/]+)/v/[^/]+\.tgz`)
+		vers := extract(r, `/v1/stemcell/[^/]+/v/([^/]+)\.tgz`)
+		log.Debugf("retrieving version '%s' (tarball) of stemcell '%s'", vers, name)
+		stemcell, err := FindStemcellVersion(api.db, name, vers)
+		if err != nil {
+			bail(w, err)
+			return
+		}
+		w.Header().Set("Location", stemcell.URL)
+		w.WriteHeader(303)
+		return
+
 	case match(r, `GET /v1/stemcell/[^/]+/v/[^/]+`):
 		name := extract(r, `/v1/stemcell/([^/]+)/v/[^/]+`)
 		vers := extract(r, `/v1/stemcell/[^/]+/v/([^/]+)`)
@@ -72,6 +85,18 @@ func (api StemcellAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		log.Debugf("retrieving latest version of stemcell '%s'", name)
 		stemcell, err := FindStemcell(api.db, name)
 		respond(w, err, 200, stemcell)
+		return
+
+	case match(r, `GET /v1/stemcell/[^/]+/latest\.tgz`):
+		name := extract(r, `/v1/stemcell/([^/]+)/latest\.tgz`)
+		log.Debugf("retrieving latest (tarball) version of stemcell '%s'", name)
+		stemcell, err := FindStemcellVersion(api.db, name, "")
+		if err != nil {
+			bail(w, err)
+			return
+		}
+		w.Header().Set("Location", stemcell.URL)
+		w.WriteHeader(303)
 		return
 
 	case match(r, `GET /v1/stemcell/[^/]+/latest`):
