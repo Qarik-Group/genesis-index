@@ -16,10 +16,13 @@ groups:
   - concourse
   - consul
   - diego
+  - dingo-postgresql
   - docker-registry
+  - etcd
   - garden-linux
   - garden-runc
   - jumpbox
+  - postgres
   - route-registrar
   - shell
   - shield
@@ -471,6 +474,33 @@ jobs:
     task: update-index
   public: true
   serial: false
+- name: dingo-postgresql
+  plan:
+  - get: dingo-postgresql
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: dingo-postgresql
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: dingo-postgresql
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
 - name: docker-registry
   plan:
   - get: docker-registry
@@ -491,6 +521,33 @@ jobs:
         GENESIS_CREDS: REDACTED:REDACTED
         GENESIS_INDEX: https://genesis.starkandwayne.com
         SUBJECT: docker-registry
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: etcd
+  plan:
+  - get: etcd
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: etcd
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: etcd
       platform: linux
       run:
         args: []
@@ -572,6 +629,33 @@ jobs:
         GENESIS_CREDS: REDACTED:REDACTED
         GENESIS_INDEX: https://genesis.starkandwayne.com
         SUBJECT: jumpbox
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: postgres
+  plan:
+  - get: postgres
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: postgres
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: postgres
       platform: linux
       run:
         args: []
@@ -1106,9 +1190,19 @@ resources:
   source:
     repository: cloudfoundry-incubator/diego-release
   type: bosh-io-release
+- name: dingo-postgresql
+  source:
+    access_token: REDACTED
+    repository: dingo-postgresql-release
+    user: dingotiles
+  type: github-release
 - name: docker-registry
   source:
     repository: cloudfoundry-community/docker-registry-boshrelease
+  type: bosh-io-release
+- name: etcd
+  source:
+    repository: cloudfoundry-incubator/etcd-release
   type: bosh-io-release
 - name: garden-linux
   source:
@@ -1122,6 +1216,12 @@ resources:
   source:
     repository: cloudfoundry-community/jumpbox-boshrelease
   type: bosh-io-release
+- name: postgres
+  source:
+    access_token: REDACTED
+    repository: postgres-boshrelease
+    user: cloudfoundry-community
+  type: github-release
 - name: route-registrar
   source:
     repository: cloudfoundry-community/route-registrar-boshrelease
