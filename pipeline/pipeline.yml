@@ -22,6 +22,7 @@ groups:
   - garden-linux
   - garden-runc
   - jumpbox
+  - port-forwarding
   - postgres
   - route-registrar
   - shell
@@ -636,6 +637,33 @@ jobs:
     task: update-index
   public: true
   serial: false
+- name: port-forwarding
+  plan:
+  - get: port-forwarding
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: port-forwarding
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: port-forwarding
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
 - name: postgres
   plan:
   - get: postgres
@@ -1216,6 +1244,12 @@ resources:
   source:
     repository: cloudfoundry-community/jumpbox-boshrelease
   type: bosh-io-release
+- name: port-forwarding
+  source:
+    access_token: REDACTED
+    repository: port-forwarding-boshrelease
+    user: cloudfoundry-community
+  type: github-release
 - name: postgres
   source:
     access_token: REDACTED
