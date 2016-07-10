@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 PIPELINE=$(cd $(dirname ${BASH_SOURCE[0]}) ; pwd)
 
 GENESIS_INDEX=${GENESIS_INDEX:-https://genesis.starkandwayne.com}
@@ -12,7 +13,9 @@ pushd $PIPELINE >/dev/null
 	for release in $(curl -Lsk ${GENESIS_INDEX}/v1/release | jq -r .[]); do
 		url=$(curl -Lsk ${GENESIS_INDEX}/v1/release/${release}/metadata | jq -r .url)
 		if echo $url | egrep -q "^https?://bosh.io/"; then
-			repo=${url#https://bosh.io/d/github.com/}
+			shopt -s extglob
+			repo=${url#http?(s)://bosh.io/d/github.com/}
+			shopt -u extglob
 			repo=${repo%?v=*}
 			cat >releases/${release}.yml <<EOF # {{{
 ---

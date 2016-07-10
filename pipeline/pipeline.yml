@@ -1248,7 +1248,7 @@ resources:
   type: bosh-io-release
 - name: bosh-warden-cpi
   source:
-    repository: http://bosh.io/d/github.com/cppforlife/bosh-warden-cpi-release
+    repository: cppforlife/bosh-warden-cpi-release
   type: bosh-io-release
 - name: bosh
   source:
@@ -1330,7 +1330,7 @@ resources:
   type: bosh-io-release
 - name: simple-remote-syslog
   source:
-    repository: http://bosh.io/d/github.com/cloudfoundry-community/simple-remote-syslog-boshrelease
+    repository: cloudfoundry-community/simple-remote-syslog-boshrelease
   type: bosh-io-release
 - name: slack-notification-resource
   source:
