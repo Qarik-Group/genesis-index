@@ -9,6 +9,7 @@ groups:
   - bosh-softlayer-cpi
   - bosh-vcloud-cpi
   - bosh-vsphere-cpi
+  - bosh-warden-cpi
   - bosh
   - cf-haproxy
   - cf-subway
@@ -27,6 +28,7 @@ groups:
   - route-registrar
   - shell
   - shield
+  - simple-remote-syslog
   - slack-notification-resource
   - toolbelt
   - uaa
@@ -279,6 +281,33 @@ jobs:
         GENESIS_CREDS: REDACTED:REDACTED
         GENESIS_INDEX: https://genesis.starkandwayne.com
         SUBJECT: bosh-vsphere-cpi
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: bosh-warden-cpi
+  plan:
+  - get: bosh-warden-cpi
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: bosh-warden-cpi
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: bosh-warden-cpi
       platform: linux
       run:
         args: []
@@ -772,6 +801,33 @@ jobs:
     task: update-index
   public: true
   serial: false
+- name: simple-remote-syslog
+  plan:
+  - get: simple-remote-syslog
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: simple-remote-syslog
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: simple-remote-syslog
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
 - name: slack-notification-resource
   plan:
   - get: slack-notification-resource
@@ -1190,6 +1246,10 @@ resources:
   source:
     repository: cloudfoundry-incubator/bosh-vsphere-cpi-release
   type: bosh-io-release
+- name: bosh-warden-cpi
+  source:
+    repository: http://bosh.io/d/github.com/cppforlife/bosh-warden-cpi-release
+  type: bosh-io-release
 - name: bosh
   source:
     repository: cloudfoundry/bosh
@@ -1267,6 +1327,10 @@ resources:
 - name: shield
   source:
     repository: starkandwayne/shield-boshrelease
+  type: bosh-io-release
+- name: simple-remote-syslog
+  source:
+    repository: http://bosh.io/d/github.com/cloudfoundry-community/simple-remote-syslog-boshrelease
   type: bosh-io-release
 - name: slack-notification-resource
   source:
