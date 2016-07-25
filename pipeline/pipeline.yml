@@ -19,10 +19,13 @@ groups:
   - diego
   - dingo-postgresql
   - docker-registry
+  - docker
   - etcd
   - garden-linux
   - garden-runc
   - jumpbox
+  - netdata
+  - openvpn
   - port-forwarding
   - postgres
   - route-registrar
@@ -42,6 +45,7 @@ groups:
   - bosh-openstack-kvm-ubuntu-trusty-go_agent-raw
   - bosh-openstack-kvm-ubuntu-trusty-go_agent
   - bosh-vcloud-esxi-ubuntu-trusty-go_agent
+  - bosh-vsphere-esxi-centos-7-go_agent
   - bosh-vsphere-esxi-ubuntu-trusty-go_agent
   - bosh-warden-boshlite-ubuntu-trusty-go_agent
   name: stemcells
@@ -559,6 +563,33 @@ jobs:
     task: update-index
   public: true
   serial: false
+- name: docker
+  plan:
+  - get: docker
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: docker
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: docker
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
 - name: etcd
   plan:
   - get: etcd
@@ -660,6 +691,60 @@ jobs:
         GENESIS_CREDS: REDACTED:REDACTED
         GENESIS_INDEX: https://genesis.starkandwayne.com
         SUBJECT: jumpbox
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: netdata
+  plan:
+  - get: netdata
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: netdata
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: netdata
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: openvpn
+  plan:
+  - get: openvpn
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: openvpn
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: openvpn
       platform: linux
       run:
         args: []
@@ -1126,6 +1211,33 @@ jobs:
     task: update-index
   public: true
   serial: false
+- name: bosh-vsphere-esxi-centos-7-go_agent
+  plan:
+  - get: bosh-vsphere-esxi-centos-7-go_agent
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: bosh-vsphere-esxi-centos-7-go_agent
+        path: stemcell
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: stemcell
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: bosh-vsphere-esxi-centos-7-go_agent
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
 - name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
   plan:
   - get: bosh-vsphere-esxi-ubuntu-trusty-go_agent
@@ -1316,6 +1428,12 @@ resources:
   source:
     repository: cloudfoundry-community/docker-registry-boshrelease
   type: bosh-io-release
+- name: docker
+  source:
+    access_token: REDACTED
+    repository: docker-boshrelease
+    user: cloudfoundry-community
+  type: github-release
 - name: etcd
   source:
     repository: cloudfoundry-incubator/etcd-release
@@ -1331,6 +1449,16 @@ resources:
 - name: jumpbox
   source:
     repository: cloudfoundry-community/jumpbox-boshrelease
+  type: bosh-io-release
+- name: netdata
+  source:
+    access_token: REDACTED
+    repository: netdata-boshrelease
+    user: cloudfoundry-community
+  type: github-release
+- name: openvpn
+  source:
+    repository: dpb587/openvpn-bosh-release
   type: bosh-io-release
 - name: port-forwarding
   source:
@@ -1405,6 +1533,10 @@ resources:
 - name: bosh-vcloud-esxi-ubuntu-trusty-go_agent
   source:
     name: bosh-vcloud-esxi-ubuntu-trusty-go_agent
+  type: bosh-io-stemcell
+- name: bosh-vsphere-esxi-centos-7-go_agent
+  source:
+    name: bosh-vsphere-esxi-centos-7-go_agent
   type: bosh-io-stemcell
 - name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
   source:
