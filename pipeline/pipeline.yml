@@ -29,6 +29,7 @@ groups:
   - port-forwarding
   - postgres
   - route-registrar
+  - sawmill
   - shell
   - shield
   - simple-remote-syslog
@@ -833,6 +834,33 @@ jobs:
     task: update-index
   public: true
   serial: false
+- name: sawmill
+  plan:
+  - get: sawmill
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: sawmill
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: sawmill
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
 - name: shell
   plan:
   - get: shell
@@ -1476,6 +1504,12 @@ resources:
   source:
     repository: cloudfoundry-community/route-registrar-boshrelease
   type: bosh-io-release
+- name: sawmill
+  source:
+    access_token: REDACTED
+    repository: sawmill-boshrelease
+    user: cloudfoundry-community
+  type: github-release
 - name: shell
   source:
     repository: cloudfoundry-community/shell-boshrelease
