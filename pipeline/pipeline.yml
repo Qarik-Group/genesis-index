@@ -25,6 +25,7 @@ groups:
   - garden-runc
   - jumpbox
   - netdata
+  - nxlog
   - openvpn
   - port-forwarding
   - postgres
@@ -719,6 +720,33 @@ jobs:
         GENESIS_CREDS: REDACTED:REDACTED
         GENESIS_INDEX: https://genesis.starkandwayne.com
         SUBJECT: netdata
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: nxlog
+  plan:
+  - get: nxlog
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: nxlog
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: nxlog
       platform: linux
       run:
         args: []
@@ -1484,6 +1512,10 @@ resources:
     repository: netdata-boshrelease
     user: cloudfoundry-community
   type: github-release
+- name: nxlog
+  source:
+    repository: hybris/nxlog-boshrelease
+  type: bosh-io-release
 - name: openvpn
   source:
     repository: dpb587/openvpn-bosh-release
