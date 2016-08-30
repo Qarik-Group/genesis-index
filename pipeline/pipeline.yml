@@ -35,6 +35,7 @@ groups:
   - shield
   - simple-remote-syslog
   - slack-notification-resource
+  - strongswan
   - tmate
   - toolbelt
   - uaa
@@ -997,6 +998,33 @@ jobs:
     task: update-index
   public: true
   serial: false
+- name: strongswan
+  plan:
+  - get: strongswan
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: strongswan
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: strongswan
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
 - name: tmate
   plan:
   - get: tmate
@@ -1558,6 +1586,12 @@ resources:
   source:
     repository: cloudfoundry-community/slack-notification-resource-boshrelease
   type: bosh-io-release
+- name: strongswan
+  source:
+    access_token: REDACTED
+    repository: strongswan-boshrelease
+    user: cloudfoundry-community
+  type: github-release
 - name: tmate
   source:
     access_token: REDACTED
