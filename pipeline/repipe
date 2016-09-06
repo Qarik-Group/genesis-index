@@ -176,8 +176,8 @@ EOF
 	trap "rm -f ${PIPELINE}/.deploy.yml" INT QUIT TERM EXIT
 	           spruce merge base.yml releases/*.yml stemcells/*.yml > .deploy.yml  &&
 	REDACT=yes spruce merge base.yml releases/*.yml stemcells/*.yml > pipeline.yml &&
-	fly --target sw set-pipeline --pipeline genesis-index --config .deploy.yml     &&
-	fly --target sw unpause-pipeline --pipeline genesis-index
+	fly --target vsphere set-pipeline --pipeline genesis-index --config .deploy.yml     &&
+	fly --target vsphere unpause-pipeline --pipeline genesis-index
 	rm -rf releases stemcells
 popd >/dev/null
 
