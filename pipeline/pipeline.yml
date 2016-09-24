@@ -4,6 +4,7 @@ groups:
   - bolo
   - bosh-aws-cpi
   - bosh-azure-cpi
+  - bosh-google-cpi
   - bosh-openstack-cpi
   - bosh-rackhd-cpi
   - bosh-softlayer-cpi
@@ -156,6 +157,33 @@ jobs:
         GENESIS_CREDS: REDACTED:REDACTED
         GENESIS_INDEX: https://genesis.starkandwayne.com
         SUBJECT: bosh-azure-cpi
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: bosh-google-cpi
+  plan:
+  - get: bosh-google-cpi
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: bosh-google-cpi
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: bosh-google-cpi
       platform: linux
       run:
         args: []
@@ -1505,6 +1533,10 @@ resources:
 - name: bosh-azure-cpi
   source:
     repository: cloudfoundry-incubator/bosh-azure-cpi-release
+  type: bosh-io-release
+- name: bosh-google-cpi
+  source:
+    repository: cloudfoundry-incubator/bosh-google-cpi-release
   type: bosh-io-release
 - name: bosh-openstack-cpi
   source:
