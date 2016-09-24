@@ -50,6 +50,7 @@ groups:
   - bosh-aws-xen-hvm-ubuntu-trusty-go_agent
   - bosh-aws-xen-ubuntu-trusty-go_agent
   - bosh-azure-hyperv-ubuntu-trusty-go_agent
+  - bosh-google-kvm-ubuntu-trusty-go_agent
   - bosh-openstack-kvm-ubuntu-trusty-go_agent-raw
   - bosh-openstack-kvm-ubuntu-trusty-go_agent
   - bosh-vcloud-esxi-ubuntu-trusty-go_agent
@@ -1354,6 +1355,33 @@ jobs:
     task: update-index
   public: true
   serial: false
+- name: bosh-google-kvm-ubuntu-trusty-go_agent
+  plan:
+  - get: bosh-google-kvm-ubuntu-trusty-go_agent
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: bosh-google-kvm-ubuntu-trusty-go_agent
+        path: stemcell
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: stemcell
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: bosh-google-kvm-ubuntu-trusty-go_agent
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
 - name: bosh-openstack-kvm-ubuntu-trusty-go_agent-raw
   plan:
   - get: bosh-openstack-kvm-ubuntu-trusty-go_agent-raw
@@ -1781,6 +1809,10 @@ resources:
 - name: bosh-azure-hyperv-ubuntu-trusty-go_agent
   source:
     name: bosh-azure-hyperv-ubuntu-trusty-go_agent
+  type: bosh-io-stemcell
+- name: bosh-google-kvm-ubuntu-trusty-go_agent
+  source:
+    name: bosh-google-kvm-ubuntu-trusty-go_agent
   type: bosh-io-stemcell
 - name: bosh-openstack-kvm-ubuntu-trusty-go_agent-raw
   source:
