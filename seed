@@ -34,7 +34,7 @@ do
 	POST '/v1/stemcell' '{"name":"'${stemcell}'","url":"https://bosh.io/d/stemcells/'${stemcell}'?v={{version}}"}'
 done
 
-for cpi in aws azure openstack rackhd softlayer vcloud vsphere
+for cpi in aws azure openstack rackhd softlayer vcloud vsphere google
 do
 	POST '/v1/release' '{"name":"bosh-'${cpi}'-cpi","url":"https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-'${cpi}'-cpi-release?v={{version}}"}'
 done
@@ -47,9 +47,33 @@ for release in \
 	route-registrar \
 	shell \
 	toolbelt \
-	vault
+	vault \
+	prometheus \
+	sawmill \
+	simple-remote-syslog \
+	slack-notification-resource
 do
 	POST '/v1/release' '{"name":"'${release}'","url":"https://bosh.io/d/github.com/cloudfoundry-community/'${release}'-boshrelease?v={{version}}"}'
+done
+
+for release in \
+	cloudfoundry/cf-release \
+	cloudfoundry/cf-mysql-release \
+	cloudfoundry/bosh \
+	cloudfoundry/uaa-release \
+	pivotal-cf/cf-rabbitmq-release \
+	pivotal-cf/cf-redis-release \
+	cloudfoundry-incubator/diego-release \
+	cloudfoundry-incubator/etcd-release \
+	cloudfoundry-incubator/garden-linux-release \
+	cloudfoundry-incubator/garden-runc-release \
+	cf-platform-eng/docker-release \
+	concourse/concourse \
+	cppforlife/bosh-warden-cpi-release \
+	hybris/nxlog-boshrelease \
+	dpb587/openvpn-bosh-release
+do
+	POST '/v1/release' '{"name":"'${release}'","url":"https://bosh.io/d/github.com/'${release}'?v={{version}}"}'
 done
 
 for release in \
@@ -59,9 +83,20 @@ do
 done
 
 for release in \
-	bolo
+	bolo \
+	postgres \
+	port-forwarding \
+	strongswan \
+	netdata \
+	tmate
 do
 	POST '/v1/release' '{"name":"'${release}'","url":"https://github.com/cloudfoundry-community/'${release}'-boshrelease/releases/download/v{{version}}/'${release}'-{{version}}.tgz"}'
+done
+
+for release in \
+	dingotiles/dingo-postgresql-release
+do
+	POST '/v1/release' '{"name":"'${release}'","url":"https://github.com/'${release}'/releases/download/v{{version}}/'${release}'-{{version}}.tgz"}'
 done
 
 echo "DONE"
