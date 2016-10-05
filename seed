@@ -29,7 +29,9 @@ for stemcell in \
 	bosh-openstack-kvm-ubuntu-trusty-go_agent-raw \
 	bosh-vcloud-esxi-ubuntu-trusty-go_agent \
 	bosh-vsphere-esxi-ubuntu-trusty-go_agent \
-	bosh-warden-boshlite-ubuntu-trusty-go_agent
+	bosh-vsphere-esxi-centos-7-go_agent \
+	bosh-warden-boshlite-ubuntu-trusty-go_agent \
+	bosh-google-kvm-ubuntu-trusty-go_agent
 do
 	POST '/v1/stemcell' '{"name":"'${stemcell}'","url":"https://bosh.io/d/stemcells/'${stemcell}'?v={{version}}"}'
 done
@@ -56,24 +58,26 @@ do
 	POST '/v1/release' '{"name":"'${release}'","url":"https://bosh.io/d/github.com/cloudfoundry-community/'${release}'-boshrelease?v={{version}}"}'
 done
 
-for release in \
-	cloudfoundry/cf-release \
-	cloudfoundry/cf-mysql-release \
-	cloudfoundry/bosh \
-	cloudfoundry/uaa-release \
-	pivotal-cf/cf-rabbitmq-release \
-	pivotal-cf/cf-redis-release \
-	cloudfoundry-incubator/diego-release \
-	cloudfoundry-incubator/etcd-release \
-	cloudfoundry-incubator/garden-linux-release \
-	cloudfoundry-incubator/garden-runc-release \
-	cf-platform-eng/docker-release \
-	concourse/concourse \
-	cppforlife/bosh-warden-cpi-release \
-	hybris/nxlog-boshrelease \
-	dpb587/openvpn-bosh-release
+for r in \
+	cf:cloudfoundry/cf-release \
+	cf-mysql:cloudfoundry/cf-mysql-release \
+	bosh:cloudfoundry/bosh \
+	uaa:cloudfoundry/uaa-release \
+	cf-rabbitmq:pivotal-cf/cf-rabbitmq-release \
+	cf-redis:pivotal-cf/cf-redis-release \
+	diego:cloudfoundry-incubator/diego-release \
+	etcd:cloudfoundry-incubator/etcd-release \
+	garden-linux:cloudfoundry-incubator/garden-linux-release \
+	garden-runc:cloudfoundry-incubator/garden-runc-release \
+	docker:cf-platform-eng/docker-release \
+	concourse:concourse/concourse \
+	bosh-warden-cpi:cppforlife/bosh-warden-cpi-release \
+	nxlog:hybris/nxlog-boshrelease \
+	openvpn:dpb587/openvpn-bosh-release
 do
-	POST '/v1/release' '{"name":"'${release}'","url":"https://bosh.io/d/github.com/'${release}'?v={{version}}"}'
+	name=$(echo ${r} | cut -d ":" -f1)
+	release=$(echo ${r} | cut -d ":" -f2)
+	POST '/v1/release' '{"name":"'${name}'","url":"https://bosh.io/d/github.com/'${release}'?v={{version}}"}'
 done
 
 for release in \
@@ -93,10 +97,12 @@ do
 	POST '/v1/release' '{"name":"'${release}'","url":"https://github.com/cloudfoundry-community/'${release}'-boshrelease/releases/download/v{{version}}/'${release}'-{{version}}.tgz"}'
 done
 
-for release in \
-	dingotiles/dingo-postgresql-release
+for r in \
+	dingo-postgresql:dingotiles/dingo-postgresql-release
 do
-	POST '/v1/release' '{"name":"'${release}'","url":"https://github.com/'${release}'/releases/download/v{{version}}/'${release}'-{{version}}.tgz"}'
+	name=$(echo ${r} | cut -d ":" -f1)
+	release=$(echo ${r} | cut -d ":" -f2)
+	POST '/v1/release' '{"name":"'${name}'","url":"https://github.com/'${release}'/releases/download/v{{version}}/'${release}'-{{version}}.tgz"}'
 done
 
 echo "DONE"
