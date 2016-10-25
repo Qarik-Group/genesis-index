@@ -101,10 +101,11 @@ done
 
 for r in \
 	dingo-postgresql:dingotiles/dingo-postgresql-release
+	nginx:cloudfoundry-community/nginx-release
 do
 	name=$(echo ${r} | cut -d ":" -f1)
-	release=$(echo ${r} | cut -d ":" -f2)
-	POST '/v1/release' '{"name":"'${name}'","url":"https://github.com/'${release}'/releases/download/v{{version}}/'${release}'-{{version}}.tgz"}'
+	repo=$(echo ${r} | cut -d ":" -f2)
+	POST '/v1/release' '{"name":"'${name}'","url":"https://github.com/'${repo}'/releases/download/v{{version}}/'${name}'-{{version}}.tgz"}'
 done
 
 echo "DONE"
