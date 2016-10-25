@@ -27,6 +27,8 @@ groups:
   - etcd
   - garden-linux
   - garden-runc
+  - grafana
+  - influxdb
   - jumpbox
   - netdata
   - nxlog
@@ -781,6 +783,60 @@ jobs:
         GENESIS_CREDS: REDACTED:REDACTED
         GENESIS_INDEX: https://genesis.starkandwayne.com
         SUBJECT: garden-runc
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: grafana
+  plan:
+  - get: grafana
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: grafana
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: grafana
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: influxdb
+  plan:
+  - get: influxdb
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: influxdb
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: influxdb
       platform: linux
       run:
         args: []
@@ -1714,6 +1770,14 @@ resources:
   source:
     repository: cloudfoundry-incubator/garden-runc-release
   type: bosh-io-release
+- name: grafana
+  source:
+    repository: vito/grafana-boshrelease
+  type: bosh-io-release
+- name: influxdb
+  source:
+    repository: vito/influxdb-boshrelease
+  type: bosh-io-release
 - name: jumpbox
   source:
     repository: cloudfoundry-community/jumpbox-boshrelease
@@ -1754,10 +1818,8 @@ resources:
   type: bosh-io-release
 - name: sawmill
   source:
-    access_token: REDACTED
-    repository: sawmill-boshrelease
-    user: cloudfoundry-community
-  type: github-release
+    repository: cloudfoundry-community/sawmill-boshrelease
+  type: bosh-io-release
 - name: shell
   source:
     repository: cloudfoundry-community/shell-boshrelease
