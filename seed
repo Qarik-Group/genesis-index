@@ -100,7 +100,7 @@ do
 done
 
 for r in \
-	dingo-postgresql:dingotiles/dingo-postgresql-release
+	dingo-postgresql:dingotiles/dingo-postgresql-release \
 	nginx:cloudfoundry-community/nginx-release
 do
 	name=$(echo ${r} | cut -d ":" -f1)
