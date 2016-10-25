@@ -69,11 +69,12 @@ for r in \
 	etcd:cloudfoundry-incubator/etcd-release \
 	garden-linux:cloudfoundry-incubator/garden-linux-release \
 	garden-runc:cloudfoundry-incubator/garden-runc-release \
-	docker:cf-platform-eng/docker-release \
 	concourse:concourse/concourse \
 	bosh-warden-cpi:cppforlife/bosh-warden-cpi-release \
 	nxlog:hybris/nxlog-boshrelease \
-	openvpn:dpb587/openvpn-bosh-release
+	openvpn:dpb587/openvpn-bosh-release \
+	influxdb:vito/influxdb-boshrelease \
+	grafana:vito/grafana-boshrelease
 do
 	name=$(echo ${r} | cut -d ":" -f1)
 	release=$(echo ${r} | cut -d ":" -f2)
@@ -92,6 +93,7 @@ for release in \
 	port-forwarding \
 	strongswan \
 	netdata \
+	docker \
 	tmate
 do
 	POST '/v1/release' '{"name":"'${release}'","url":"https://github.com/cloudfoundry-community/'${release}'-boshrelease/releases/download/v{{version}}/'${release}'-{{version}}.tgz"}'
