@@ -206,11 +206,11 @@ func DeleteStemcellVersion(d *db.DB, name, version string) error {
 	return d.Exec(`DELETE FROM stemcell_versions WHERE name = $1 AND version = $2`, name, version)
 }
 
-func CheckStemcellVersion(d *db.DB, name, version string) {
+func CheckStemcellVersion(d *db.DB, name, version string) error {
 	stemcell, err := FindStemcell(d, name)
 	if err != nil {
 		log.Debugf("unable to find stemcell '%s': %s", name, err)
-		return
+		return err
 	}
 
 	/* generate the URL from the template */
@@ -222,37 +222,44 @@ func CheckStemcellVersion(d *db.DB, name, version string) {
 	if n == 0 {
 		recheck = false
 		num, err := vnum(version)
-		if err == nil {
-			err = d.Exec(`INSERT INTO stemcell_versions (name, version, vnum, valid) VALUES ($1, $2, $3, 0)`,
-				name, version, num)
-			if err != nil {
-				log.Debugf("unable to check version '%s' of '%s': %s", version, name, err)
+		if err != nil {
+			return err
+		}
+		err = d.Exec(`INSERT INTO stemcell_versions (name, version, vnum, valid) VALUES ($1, $2, $3, 0)`,
+			name, version, num)
+		if err != nil {
+			log.Debugf("unable to check version '%s' of '%s': %s", version, name, err)
+			return err
+		}
+	}
+
+	/* do the async part in its own goroutine */
+	go func() {
+		/* download and SHA1 the file */
+		sha1, err := sha1sum(url)
+		if err != nil {
+			log.Debugf("download/sha1sum failed: %s...", err)
+			if !recheck {
+				d.Exec(`DELETE FROM stemcell_versions WHERE name = $1 AND version = $2`,
+					name, version)
 			}
+			return
 		}
-	}
 
-	/* download and SHA1 the file */
-	sha1, err := sha1sum(url)
-	if err != nil {
-		log.Debugf("download/sha1sum failed: %s...", err)
-		if !recheck {
-			d.Exec(`DELETE FROM stemcell_versions WHERE name = $1 AND version = $2`,
-				name, version)
+		err = d.Exec(`
+	UPDATE stemcell_versions
+	SET valid     = 1,
+		url       = $3,
+		sha1      = $4
+
+	WHERE name    = $1
+	  AND version = $2`, name, version, url, sha1)
+
+		if err != nil {
+			log.Debugf("unable to check version '%s' of '%s': %s", version, name, err)
+			return
 		}
-		return
-	}
+	}()
 
-	err = d.Exec(`
-UPDATE stemcell_versions
-SET valid     = 1,
-    url       = $3,
-    sha1      = $4
-
-WHERE name    = $1
-  AND version = $2`, name, version, url, sha1)
-
-	if err != nil {
-		log.Debugf("unable to check version '%s' of '%s': %s", version, name, err)
-		return
-	}
+	return nil
 }

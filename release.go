@@ -206,11 +206,11 @@ func DeleteReleaseVersion(d *db.DB, name, version string) error {
 	return d.Exec(`DELETE FROM release_versions WHERE name = $1 AND version = $2`, name, version)
 }
 
-func CheckReleaseVersion(d *db.DB, name, version string) {
+func CheckReleaseVersion(d *db.DB, name, version string) error {
 	release, err := FindRelease(d, name)
 	if err != nil {
 		log.Debugf("unable to find release '%s': %s", name, err)
-		return
+		return err
 	}
 
 	/* generate the URL from the template */
@@ -222,34 +222,40 @@ func CheckReleaseVersion(d *db.DB, name, version string) {
 	if n == 0 {
 		recheck = false
 		num, err := vnum(version)
-		if err == nil {
-			d.Exec(`INSERT INTO release_versions (name, version, vnum, valid) VALUES ($1, $2, $3, 0)`,
-				name, version, num)
+		if err != nil {
+			return err
 		}
+		d.Exec(`INSERT INTO release_versions (name, version, vnum, valid) VALUES ($1, $2, $3, 0)`,
+			name, version, num)
 	}
 
-	/* download and SHA1 the file */
-	sha1, err := sha1sum(url)
-	if err != nil {
-		log.Debugf("download/sha1sum failed: %s...", err)
-		if !recheck {
-			d.Exec(`DELETE FROM release_versions WHERE name = $1 AND version = $2`,
-				name, version)
+	/* do the async part in its own goroutine */
+	go func() {
+		/* download and SHA1 the file */
+		sha1, err := sha1sum(url)
+		if err != nil {
+			log.Debugf("download/sha1sum failed: %s...", err)
+			if !recheck {
+				d.Exec(`DELETE FROM release_versions WHERE name = $1 AND version = $2`,
+					name, version)
+			}
+			return
 		}
-		return
-	}
 
-	err = d.Exec(`
-UPDATE release_versions
-SET valid     = 1,
-    url       = $3,
-    sha1      = $4
+		err = d.Exec(`
+	UPDATE release_versions
+	SET valid     = 1,
+		url       = $3,
+		sha1      = $4
 
-WHERE name    = $1
-  AND version = $2`, name, version, url, sha1)
+	WHERE name    = $1
+	  AND version = $2`, name, version, url, sha1)
 
-	if err != nil {
-		log.Debugf("unable to check version '%s' of '%s': %s", version, name, err)
-		return
-	}
+		if err != nil {
+			log.Debugf("unable to check version '%s' of '%s': %s", version, name, err)
+			return
+		}
+	}()
+
+	return nil;
 }

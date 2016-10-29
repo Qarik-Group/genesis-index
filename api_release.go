@@ -114,8 +114,8 @@ func (api ReleaseAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		vers := extract(r, `/v1/release/[^/]+/v/([^/]+)`)
 		log.Debugf("checking for version '%s' of release '%s'", vers, name)
 
-		go CheckReleaseVersion(api.db, name, vers)
-		respond(w, nil, 200, "task started in background")
+		err := CheckReleaseVersion(api.db, name, vers)
+		respond(w, err, 200, "task started in background")
 		return
 
 	case match(r, `DELETE /v1/release/[^/]+/v/[^/]+`):
