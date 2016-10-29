@@ -110,20 +110,33 @@ func authed(w http.ResponseWriter, r *http.Request) bool {
 }
 
 func vnum(v string) (uint64, error) {
+	var rc, n uint64
+	var err error
+
+	re := regexp.MustCompile(`^(.+)[-.]rc\.(\d+)$`)
+	if m := re.FindStringSubmatch(v); len(m) == 3 {
+		v = m[1]
+		rc, err = strconv.ParseUint(m[2], 10, 64)
+		if err != nil {
+			log.Debugf("vnum had an issue with '%s': %s", v, err)
+			return n, err
+		}
+	}
+
 	sem := strings.Split(v, ".")
 	for len(sem) < 3 {
 		sem = append(sem, "0")
 	}
 
-	var n uint64 = 0
 	for i := 0; i < 3; i++ {
 		u, err := strconv.ParseUint(sem[i], 10, 64)
 		if err != nil {
 			log.Debugf("vnum had an issue with '%s': %s", v, err)
 			return n, err
 		}
-		n = n*1000000 + u
+		n = n*10000 + u
 	}
+	n = n*10000 + rc
 
 	return n, nil
 }
