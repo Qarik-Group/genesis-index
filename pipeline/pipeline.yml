@@ -18,6 +18,7 @@ groups:
   - cf-redis
   - cf-subway
   - cf
+  - cflinuxfs2-rootfs
   - concourse
   - consul
   - diego
@@ -31,6 +32,7 @@ groups:
   - influxdb
   - jumpbox
   - netdata
+  - nginx
   - nxlog
   - openvpn
   - port-forwarding
@@ -547,6 +549,33 @@ jobs:
     task: update-index
   public: true
   serial: false
+- name: cflinuxfs2-rootfs
+  plan:
+  - get: cflinuxfs2-rootfs
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: cflinuxfs2-rootfs
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: cflinuxfs2-rootfs
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
 - name: concourse
   plan:
   - get: concourse
@@ -891,6 +920,33 @@ jobs:
         GENESIS_CREDS: REDACTED:REDACTED
         GENESIS_INDEX: https://genesis.starkandwayne.com
         SUBJECT: netdata
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: nginx
+  plan:
+  - get: nginx
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: nginx
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: nginx
       platform: linux
       run:
         args: []
@@ -1730,6 +1786,10 @@ resources:
   source:
     repository: cloudfoundry/cf-release
   type: bosh-io-release
+- name: cflinuxfs2-rootfs
+  source:
+    repository: cloudfoundry/cflinuxfs2-rootfs-release
+  type: bosh-io-release
 - name: concourse
   source:
     repository: concourse/concourse
@@ -1740,7 +1800,7 @@ resources:
   type: bosh-io-release
 - name: diego
   source:
-    repository: cloudfoundry-incubator/diego-release
+    repository: cloudfoundry/diego-release
   type: bosh-io-release
 - name: dingo-postgresql
   source:
@@ -1786,6 +1846,12 @@ resources:
   source:
     access_token: REDACTED
     repository: netdata-boshrelease
+    user: cloudfoundry-community
+  type: github-release
+- name: nginx
+  source:
+    access_token: REDACTED
+    repository: nginx-release
     user: cloudfoundry-community
   type: github-release
 - name: nxlog
