@@ -28,6 +28,7 @@ groups:
   - garden-linux
   - garden-runc
   - grafana
+  - haproxy
   - influxdb
   - jumpbox
   - netdata
@@ -811,6 +812,33 @@ jobs:
         GENESIS_CREDS: REDACTED:REDACTED
         GENESIS_INDEX: https://genesis.starkandwayne.com
         SUBJECT: grafana
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: haproxy
+  plan:
+  - get: haproxy
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: haproxy
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: haproxy
       platform: linux
       run:
         args: []
@@ -1801,6 +1829,10 @@ resources:
 - name: grafana
   source:
     repository: vito/grafana-boshrelease
+  type: bosh-io-release
+- name: haproxy
+  source:
+    repository: cloudfoundry-community/haproxy-boshrelease
   type: bosh-io-release
 - name: influxdb
   source:
