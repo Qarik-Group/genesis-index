@@ -24,7 +24,7 @@ func main() {
 	log.Infof("genesis-index starting up")
 
 	var d *db.DB
-	if dsn, err := ParseVcap(os.Getenv("VCAP_SERVICES"), "postgres", "uri"); err == nil {
+	if dsn, err := ParseVcap(os.Getenv("VCAP_SERVICES"), "postgresql", "uri"); err == nil {
 		d, err = Database("postgres", fmt.Sprintf("%s?sslmode=disable", dsn))
 		if err != nil {
 			log.Infof("Unable to connect to database: %s", err)
@@ -37,6 +37,9 @@ func main() {
 			return
 		}
 	} else {
+		if err != nil {
+			log.Errorf("DB Connection error: %s", err)
+		}
 		log.Errorf("Unable to determine DSN for backing database")
 		log.Errorf("No service tagged 'postgres' is bound (per the VCAP_SERVICES environment variable)")
 		log.Errorf("and SQLITE_DB environment variable is not set.")

@@ -8,10 +8,11 @@ import (
 )
 
 type Release struct {
-	Name    string `json:"name"`
-	Version string `json:"version,omitempty"`
-	SHA1    string `json:"sha1,omitempty"`
-	URL     string `json:"url,omitempty"`
+	Name     string `json:"name"`
+	Version  string `json:"version,omitempty"`
+	SHA1     string `json:"sha1,omitempty"`
+	URL      string `json:"url,omitempty"`
+	Disabled bool   `json:"disabled"`
 }
 
 func CreateRelease(d *db.DB, name, url string) error {
@@ -40,7 +41,7 @@ func FindAllReleases(d *db.DB) ([]string, error) {
 func FindRelease(d *db.DB, name string) (Release, error) {
 	var o Release
 
-	r, err := d.Query(`SELECT name, url FROM releases WHERE name = $1`, name)
+	r, err := d.Query(`SELECT name, url, disabled FROM releases WHERE name = $1`, name)
 	if err != nil {
 		return o, err
 	}
@@ -48,7 +49,7 @@ func FindRelease(d *db.DB, name string) (Release, error) {
 	if !r.Next() {
 		return o, fmt.Errorf("release '%s' not found", name)
 	}
-	if err = r.Scan(&o.Name, &o.URL); err != nil {
+	if err = r.Scan(&o.Name, &o.URL, &o.Disabled); err != nil {
 		return o, err
 	}
 	if r.Next() {
@@ -257,5 +258,5 @@ func CheckReleaseVersion(d *db.DB, name, version string) error {
 		}
 	}()
 
-	return nil;
+	return nil
 }
