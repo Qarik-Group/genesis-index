@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func ParseVcap(src, tag, subkey string) (string, error) {
+func ParseVcap(src string, tags []string, subkey string) (string, error) {
 
 	var services map[string][]struct {
 		Credentials    map[string]interface{} `json:"credentials"`
@@ -25,10 +25,13 @@ func ParseVcap(src, tag, subkey string) (string, error) {
 	for _, l := range services {
 		for _, service := range l {
 			tagged := false
+		TAGS:
 			for _, actual := range service.Tags {
-				if tag == actual {
-					tagged = true
-					break
+				for _, tag := range tags {
+					if tag == actual {
+						tagged = true
+						break TAGS
+					}
 				}
 			}
 
