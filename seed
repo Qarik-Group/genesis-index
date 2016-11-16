@@ -43,7 +43,7 @@ done
 
 for release in \
 	bind9 \
-	cf-haproxy cf-subway consul \
+	haproxy cf-subway consul \
 	docker-registry \
 	jumpbox \
 	route-registrar \
