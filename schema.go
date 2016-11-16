@@ -77,6 +77,18 @@ func Database(driver, dsn string) (*db.DB, error) {
 		/* this migration is now done every time, since its idempotent */
 		return nil
 	}) // }}}
+	s.Version(3, func(d *db.DB) error { // {{{
+		err = d.Exec(`
+  ALTER TABLE releases
+    ADD COLUMN disabled BOOL DEFAULT false
+`)
+
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}) // }}}
 
 	err = s.Migrate(d, db.Latest)
 	if err != nil {

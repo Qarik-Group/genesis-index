@@ -37,6 +37,9 @@ func main() {
 			return
 		}
 	} else {
+		if err != nil {
+			log.Errorf("DB Connection error: %s", err)
+		}
 		log.Errorf("Unable to determine DSN for backing database")
 		log.Errorf("No service tagged 'postgres' is bound (per the VCAP_SERVICES environment variable)")
 		log.Errorf("and SQLITE_DB environment variable is not set.")

@@ -1,0 +1,10 @@
+---
+applications:
+  - name:      genesis-index-test
+    host:      genesis-test
+    domain:    starkandwayne.com
+    memory:    64M
+    command:   genesis-index
+    buildpack: go_buildpack
+    services:
+    - genesis-index-test-db

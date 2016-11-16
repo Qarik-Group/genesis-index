@@ -11,6 +11,14 @@ pushd $PIPELINE >/dev/null
 	mkdir releases stemcells
 
 	for release in $(curl -Lsk ${GENESIS_INDEX}/v1/release | jq -r .[]); do
+		disabled=$(curl -Lsk ${GENESIS_INDEX}/v1/release/${release}/metadata | jq -r .disabled)
+		if [[ ${disabled} == "true" ]]; then
+			echo skipping $release
+			# https://www.youtube.com/watch?v=dDZzl9AyXeg
+			continue
+		fi
+		echo processing $release
+
 		url=$(curl -Lsk ${GENESIS_INDEX}/v1/release/${release}/metadata | jq -r .url)
 		if echo $url | egrep -q "^https?://bosh.io/"; then
 			shopt -s extglob

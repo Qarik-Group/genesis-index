@@ -12,7 +12,6 @@ groups:
   - bosh-vsphere-cpi
   - bosh-warden-cpi
   - bosh
-  - cf-haproxy
   - cf-mysql
   - cf-rabbitmq
   - cf-redis
@@ -380,33 +379,6 @@ jobs:
         GENESIS_CREDS: REDACTED:REDACTED
         GENESIS_INDEX: https://genesis.starkandwayne.com
         SUBJECT: bosh
-      platform: linux
-      run:
-        args: []
-        path: ./run/check-version
-    task: update-index
-  public: true
-  serial: false
-- name: cf-haproxy
-  plan:
-  - get: cf-haproxy
-    trigger: true
-  - get: version-check-script
-  - config:
-      image_resource:
-        source:
-          repository: starkandwayne/concourse
-        type: docker-image
-      inputs:
-      - name: cf-haproxy
-        path: release
-      - name: version-check-script
-        path: run
-      params:
-        CHECK_TYPE: release
-        GENESIS_CREDS: REDACTED:REDACTED
-        GENESIS_INDEX: https://genesis.starkandwayne.com
-        SUBJECT: cf-haproxy
       platform: linux
       run:
         args: []
@@ -1761,10 +1733,6 @@ resources:
 - name: bosh
   source:
     repository: cloudfoundry/bosh
-  type: bosh-io-release
-- name: cf-haproxy
-  source:
-    repository: cloudfoundry-community/cf-haproxy-boshrelease
   type: bosh-io-release
 - name: cf-mysql
   source:
