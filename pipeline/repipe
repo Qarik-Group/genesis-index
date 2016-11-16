@@ -14,7 +14,7 @@ pushd $PIPELINE >/dev/null
 		disabled=$(curl -Lsk ${GENESIS_INDEX}/v1/release/${release}/metadata | jq -r .disabled)
 		if [[ ${disabled} == "true" ]]; then
 			echo skipping $release
-			# FIXME this isn't enough?
+			# https://www.youtube.com/watch?v=dDZzl9AyXeg
 			continue
 		fi
 		echo processing $release

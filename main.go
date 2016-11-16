@@ -24,7 +24,7 @@ func main() {
 	log.Infof("genesis-index starting up")
 
 	var d *db.DB
-	if dsn, err := ParseVcap(os.Getenv("VCAP_SERVICES"), "postgresql", "uri"); err == nil {
+	if dsn, err := ParseVcap(os.Getenv("VCAP_SERVICES"), []string{"postgres", "postgresql"}, "uri"); err == nil {
 		d, err = Database("postgres", fmt.Sprintf("%s?sslmode=disable", dsn))
 		if err != nil {
 			log.Infof("Unable to connect to database: %s", err)
