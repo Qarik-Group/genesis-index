@@ -43,7 +43,7 @@ done
 
 for release in \
 	bind9 \
-	haproxy cf-subway consul \
+	cf-subway consul \
 	docker-registry \
 	jumpbox \
 	route-registrar \
@@ -89,6 +89,7 @@ done
 
 for release in \
 	bolo \
+	haproxy \
 	postgres \
 	port-forwarding \
 	strongswan \

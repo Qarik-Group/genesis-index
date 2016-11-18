@@ -1832,8 +1832,10 @@ resources:
   type: bosh-io-release
 - name: haproxy
   source:
-    repository: cloudfoundry-community/haproxy-boshrelease
-  type: bosh-io-release
+    access_token: REDACTED
+    repository: haproxy-boshrelease
+    user: cloudfoundry-community
+  type: github-release
 - name: influxdb
   source:
     repository: vito/influxdb-boshrelease
