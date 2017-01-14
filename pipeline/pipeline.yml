@@ -1820,11 +1820,11 @@ resources:
   type: bosh-io-release
 - name: garden-linux
   source:
-    repository: cloudfoundry-incubator/garden-linux-release
+    repository: cloudfoundry/garden-linux-release
   type: bosh-io-release
 - name: garden-runc
   source:
-    repository: cloudfoundry-incubator/garden-runc-release
+    repository: cloudfoundry/garden-runc-release
   type: bosh-io-release
 - name: grafana
   source:

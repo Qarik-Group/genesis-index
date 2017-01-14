@@ -1,0 +1,28 @@
+#!/bin/bash
+set -eu
+
+if [[ -z ${GENESIS_CREDS} ]]; then
+	echo >&2 "GENESIS_CREDS not set. ./indexer will fail"
+	exit 1
+fi
+
+if [[ $# != 3 ]]; then
+	echo >&2 "Usage: ./update-url (release|stemcell) NAME URL"
+	exit 1
+fi
+
+type=$1
+name=$2
+url=$3
+
+echo Finding previously indexed versions of ${type} ${name}
+VERSIONS=$(./indexer show ${type} ${name} | jq -r ".[].version")
+
+echo Recreating ${type} ${name} with new URL
+yes yes | ./indexer delete ${type} ${name}
+./indexer create ${type} ${name} ${url}
+
+echo Reprocessing previously indexed versions of ${type} ${name}
+for version in ${VERSIONS}; do
+	./indexer check ${type} ${name} ${version}
+done

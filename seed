@@ -67,7 +67,7 @@ for r in \
 	cf-redis:pivotal-cf/cf-redis-release \
 	diego:cloudfoundry/diego-release \
 	etcd:cloudfoundry-incubator/etcd-release \
-	garden-linux:cloudfoundry-incubator/garden-linux-release \
+	garden-linux:cloudfoundry/garden-linux-release \
 	garden-runc:cloudfoundry/garden-runc-release \
 	concourse:concourse/concourse \
 	bosh-warden-cpi:cppforlife/bosh-warden-cpi-release \
