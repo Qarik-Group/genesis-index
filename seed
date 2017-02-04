@@ -90,6 +90,7 @@ done
 for release in \
 	bolo \
 	haproxy \
+	node-exporter \
 	postgres \
 	port-forwarding \
 	strongswan \

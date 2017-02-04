@@ -33,6 +33,7 @@ groups:
   - jumpbox
   - netdata
   - nginx
+  - node-exporter
   - nxlog
   - openvpn
   - port-forwarding
@@ -954,6 +955,33 @@ jobs:
     task: update-index
   public: true
   serial: false
+- name: node-exporter
+  plan:
+  - get: node-exporter
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: node-exporter
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: node-exporter
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
 - name: nxlog
   plan:
   - get: nxlog
@@ -1854,6 +1882,12 @@ resources:
   source:
     access_token: REDACTED
     repository: nginx-release
+    user: cloudfoundry-community
+  type: github-release
+- name: node-exporter
+  source:
+    access_token: REDACTED
+    repository: node-exporter-boshrelease
     user: cloudfoundry-community
   type: github-release
 - name: nxlog
