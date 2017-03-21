@@ -31,7 +31,7 @@ groups:
   - haproxy
   - influxdb
   - jumpbox
-  - logsearch-for-cloudfoundry-operators
+  - logsearch-for-cloudfoundry
   - logsearch
   - netdata
   - nginx
@@ -906,9 +906,9 @@ jobs:
     task: update-index
   public: true
   serial: false
-- name: logsearch-for-cloudfoundry-operators
+- name: logsearch-for-cloudfoundry
   plan:
-  - get: logsearch-for-cloudfoundry-operators
+  - get: logsearch-for-cloudfoundry
     trigger: true
   - get: version-check-script
   - config:
@@ -917,7 +917,7 @@ jobs:
           repository: starkandwayne/concourse
         type: docker-image
       inputs:
-      - name: logsearch-for-cloudfoundry-operators
+      - name: logsearch-for-cloudfoundry
         path: release
       - name: version-check-script
         path: run
@@ -925,7 +925,7 @@ jobs:
         CHECK_TYPE: release
         GENESIS_CREDS: REDACTED:REDACTED
         GENESIS_INDEX: https://genesis.starkandwayne.com
-        SUBJECT: logsearch-for-cloudfoundry-operators
+        SUBJECT: logsearch-for-cloudfoundry
       platform: linux
       run:
         args: []
@@ -2012,9 +2012,9 @@ resources:
   source:
     repository: cloudfoundry-community/jumpbox-boshrelease
   type: bosh-io-release
-- name: logsearch-for-cloudfoundry-operators
+- name: logsearch-for-cloudfoundry
   source:
-    repository: cloudfoundry-community/logsearch-for-cloudfoundry-operators-boshrelease
+    repository: cloudfoundry-community/logsearch-for-cloudfoundry
   type: bosh-io-release
 - name: logsearch
   source:

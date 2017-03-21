@@ -55,7 +55,6 @@ for release in \
 	simple-remote-syslog \
 	slack-notification-resource \
 	logsearch \
-	logsearch-for-cloudfoundry-operators \
 	stannis
 do
 	POST '/v1/release' '{"name":"'${release}'","url":"https://bosh.io/d/github.com/cloudfoundry-community/'${release}'-boshrelease?v={{version}}"}'
@@ -78,6 +77,7 @@ for r in \
 	nxlog:hybris/nxlog-boshrelease \
 	openvpn:dpb587/openvpn-bosh-release \
 	influxdb:vito/influxdb-boshrelease \
+	logsearch-for-cloudfoundry:cloudfoundry-community/logsearch-for-cloudfoundry \
 	grafana:vito/grafana-boshrelease
 do
 	name=$(echo ${r} | cut -d ":" -f1)
