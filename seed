@@ -53,7 +53,9 @@ for release in \
 	prometheus \
 	sawmill \
 	simple-remote-syslog \
-	slack-notification-resource
+	slack-notification-resource \
+	logsearch \
+	logsearch-for-cloudfoundry-operators
 do
 	POST '/v1/release' '{"name":"'${release}'","url":"https://bosh.io/d/github.com/cloudfoundry-community/'${release}'-boshrelease?v={{version}}"}'
 done

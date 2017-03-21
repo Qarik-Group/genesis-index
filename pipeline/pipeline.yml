@@ -31,6 +31,8 @@ groups:
   - haproxy
   - influxdb
   - jumpbox
+  - logsearch-for-cloudfoundry-operators
+  - logsearch
   - netdata
   - nginx
   - node-exporter
@@ -40,12 +42,15 @@ groups:
   - postgres
   - prometheus
   - route-registrar
+  - routing
   - sawmill
   - shell
   - shield
   - simple-remote-syslog
   - slack-notification-resource
+  - stannis
   - strongswan
+  - syslog
   - tmate
   - toolbelt
   - uaa
@@ -901,6 +906,60 @@ jobs:
     task: update-index
   public: true
   serial: false
+- name: logsearch-for-cloudfoundry-operators
+  plan:
+  - get: logsearch-for-cloudfoundry-operators
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: logsearch-for-cloudfoundry-operators
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: logsearch-for-cloudfoundry-operators
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: logsearch
+  plan:
+  - get: logsearch
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: logsearch
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: logsearch
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
 - name: netdata
   plan:
   - get: netdata
@@ -1144,6 +1203,33 @@ jobs:
     task: update-index
   public: true
   serial: false
+- name: routing
+  plan:
+  - get: routing
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: routing
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: routing
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
 - name: sawmill
   plan:
   - get: sawmill
@@ -1279,6 +1365,33 @@ jobs:
     task: update-index
   public: true
   serial: false
+- name: stannis
+  plan:
+  - get: stannis
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: stannis
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: stannis
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
 - name: strongswan
   plan:
   - get: strongswan
@@ -1299,6 +1412,33 @@ jobs:
         GENESIS_CREDS: REDACTED:REDACTED
         GENESIS_INDEX: https://genesis.starkandwayne.com
         SUBJECT: strongswan
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: syslog
+  plan:
+  - get: syslog
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: syslog
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: syslog
       platform: linux
       run:
         args: []
@@ -1872,6 +2012,14 @@ resources:
   source:
     repository: cloudfoundry-community/jumpbox-boshrelease
   type: bosh-io-release
+- name: logsearch-for-cloudfoundry-operators
+  source:
+    repository: cloudfoundry-community/logsearch-for-cloudfoundry-operators-boshrelease
+  type: bosh-io-release
+- name: logsearch
+  source:
+    repository: cloudfoundry-community/logsearch-boshrelease
+  type: bosh-io-release
 - name: netdata
   source:
     access_token: REDACTED
@@ -1918,6 +2066,10 @@ resources:
   source:
     repository: cloudfoundry-community/route-registrar-boshrelease
   type: bosh-io-release
+- name: routing
+  source:
+    repository: cloudfoundry-incubator/cf-routing-release
+  type: bosh-io-release
 - name: sawmill
   source:
     repository: cloudfoundry-community/sawmill-boshrelease
@@ -1938,12 +2090,20 @@ resources:
   source:
     repository: cloudfoundry-community/slack-notification-resource-boshrelease
   type: bosh-io-release
+- name: stannis
+  source:
+    repository: cloudfoundry-community/stannis-boshrelease
+  type: bosh-io-release
 - name: strongswan
   source:
     access_token: REDACTED
     repository: strongswan-boshrelease
     user: cloudfoundry-community
   type: github-release
+- name: syslog
+  source:
+    repository: cloudfoundry/syslog-release
+  type: bosh-io-release
 - name: tmate
   source:
     access_token: REDACTED
