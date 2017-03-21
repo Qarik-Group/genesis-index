@@ -55,7 +55,8 @@ for release in \
 	simple-remote-syslog \
 	slack-notification-resource \
 	logsearch \
-	logsearch-for-cloudfoundry-operators
+	logsearch-for-cloudfoundry-operators \
+	stannis
 do
 	POST '/v1/release' '{"name":"'${release}'","url":"https://bosh.io/d/github.com/cloudfoundry-community/'${release}'-boshrelease?v={{version}}"}'
 done
@@ -64,6 +65,7 @@ for r in \
 	cf:cloudfoundry/cf-release \
 	cf-mysql:cloudfoundry/cf-mysql-release \
 	bosh:cloudfoundry/bosh \
+	syslog:cloudfoundry/syslog-release \
 	uaa:cloudfoundry/uaa-release \
 	cf-rabbitmq:pivotal-cf/cf-rabbitmq-release \
 	cf-redis:pivotal-cf/cf-redis-release \
