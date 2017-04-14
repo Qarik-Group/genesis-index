@@ -43,6 +43,7 @@ groups:
   - prometheus
   - route-registrar
   - routing
+  - safe
   - sawmill
   - shell
   - shield
@@ -1230,6 +1231,33 @@ jobs:
     task: update-index
   public: true
   serial: false
+- name: safe
+  plan:
+  - get: safe
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: safe
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: safe
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
 - name: sawmill
   plan:
   - get: sawmill
@@ -2070,6 +2098,12 @@ resources:
   source:
     repository: cloudfoundry-incubator/cf-routing-release
   type: bosh-io-release
+- name: safe
+  source:
+    access_token: REDACTED
+    repository: safe-boshrelease
+    user: cloudfoundry-community
+  type: github-release
 - name: sawmill
   source:
     repository: cloudfoundry-community/sawmill-boshrelease

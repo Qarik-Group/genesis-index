@@ -100,6 +100,7 @@ for release in \
 	strongswan \
 	netdata \
 	docker \
+	safe \
 	tmate
 do
 	POST '/v1/release' '{"name":"'${release}'","url":"https://github.com/cloudfoundry-community/'${release}'-boshrelease/releases/download/v{{version}}/'${release}'-{{version}}.tgz"}'
