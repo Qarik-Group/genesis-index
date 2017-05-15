@@ -93,7 +93,6 @@ done
 
 for release in \
 	bolo \
-	haproxy \
 	node-exporter \
 	postgres \
 	port-forwarding \
@@ -108,7 +107,8 @@ done
 
 for r in \
 	dingo-postgresql:dingotiles/dingo-postgresql-release \
-	nginx:cloudfoundry-community/nginx-release
+	nginx:cloudfoundry-community/nginx-release \
+	haproxy:cloudfoundry-incubator/haproxy
 do
 	name=$(echo ${r} | cut -d ":" -f1)
 	repo=$(echo ${r} | cut -d ":" -f2)
