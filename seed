@@ -55,7 +55,8 @@ for release in \
 	simple-remote-syslog \
 	slack-notification-resource \
 	logsearch \
-	stannis
+	stannis \
+	locker
 do
 	POST '/v1/release' '{"name":"'${release}'","url":"https://bosh.io/d/github.com/cloudfoundry-community/'${release}'-boshrelease?v={{version}}"}'
 done

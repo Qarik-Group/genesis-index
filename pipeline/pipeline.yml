@@ -31,6 +31,7 @@ groups:
   - haproxy
   - influxdb
   - jumpbox
+  - locker
   - logsearch-for-cloudfoundry
   - logsearch
   - netdata
@@ -900,6 +901,33 @@ jobs:
         GENESIS_CREDS: REDACTED:REDACTED
         GENESIS_INDEX: https://genesis.starkandwayne.com
         SUBJECT: jumpbox
+      platform: linux
+      run:
+        args: []
+        path: ./run/check-version
+    task: update-index
+  public: true
+  serial: false
+- name: locker
+  plan:
+  - get: locker
+    trigger: true
+  - get: version-check-script
+  - config:
+      image_resource:
+        source:
+          repository: starkandwayne/concourse
+        type: docker-image
+      inputs:
+      - name: locker
+        path: release
+      - name: version-check-script
+        path: run
+      params:
+        CHECK_TYPE: release
+        GENESIS_CREDS: REDACTED:REDACTED
+        GENESIS_INDEX: https://genesis.starkandwayne.com
+        SUBJECT: locker
       platform: linux
       run:
         args: []
@@ -2030,7 +2058,7 @@ resources:
   source:
     access_token: REDACTED
     repository: haproxy-boshrelease
-    user: cloudfoundry-community
+    user: cloudfoundry-incubator
   type: github-release
 - name: influxdb
   source:
@@ -2039,6 +2067,10 @@ resources:
 - name: jumpbox
   source:
     repository: cloudfoundry-community/jumpbox-boshrelease
+  type: bosh-io-release
+- name: locker
+  source:
+    repository: cloudfoundry-community/locker-boshrelease
   type: bosh-io-release
 - name: logsearch-for-cloudfoundry
   source:
