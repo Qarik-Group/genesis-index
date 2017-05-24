@@ -2070,8 +2070,10 @@ resources:
   type: bosh-io-release
 - name: locker
   source:
-    repository: cloudfoundry-community/locker-boshrelease
-  type: bosh-io-release
+    access_token: REDACTED
+    repository: locker-boshrelease
+    user: cloudfoundry-community
+  type: github-release
 - name: logsearch-for-cloudfoundry
   source:
     repository: cloudfoundry-community/logsearch-for-cloudfoundry

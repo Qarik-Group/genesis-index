@@ -55,8 +55,7 @@ for release in \
 	simple-remote-syslog \
 	slack-notification-resource \
 	logsearch \
-	stannis \
-	locker
+	stannis
 do
 	POST '/v1/release' '{"name":"'${release}'","url":"https://bosh.io/d/github.com/cloudfoundry-community/'${release}'-boshrelease?v={{version}}"}'
 done
@@ -101,7 +100,8 @@ for release in \
 	netdata \
 	docker \
 	safe \
-	tmate
+	tmate \
+	locker
 do
 	POST '/v1/release' '{"name":"'${release}'","url":"https://github.com/cloudfoundry-community/'${release}'-boshrelease/releases/download/v{{version}}/'${release}'-{{version}}.tgz"}'
 done
