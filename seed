@@ -78,7 +78,8 @@ for r in \
 	openvpn:dpb587/openvpn-bosh-release \
 	influxdb:vito/influxdb-boshrelease \
 	logsearch-for-cloudfoundry:cloudfoundry-community/logsearch-for-cloudfoundry \
-	grafana:vito/grafana-boshrelease
+	grafana:vito/grafana-boshrelease \
+	nfs-volume:cloudfoundry-incubator/nfs-volume-release
 do
 	name=$(echo ${r} | cut -d ":" -f1)
 	release=$(echo ${r} | cut -d ":" -f2)
