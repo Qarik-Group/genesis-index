@@ -6,5 +6,6 @@ applications:
     memory:    64M
     command:   genesis-index
     buildpack: go_buildpack
+    stack:     cflinuxfs3
     services:
     - genesis-index-test-db
