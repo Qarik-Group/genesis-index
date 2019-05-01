@@ -5,4 +5,5 @@ applications:
     domain:    starkandwayne.com
     memory:    64M
     command:   genesis-index
+    stack:     cflinuxfs3
     buildpack: go_buildpack
